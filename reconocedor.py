@@ -241,13 +241,14 @@ def probarTeclas(datos):
         Xs = contenido_matriz['X']
         contenido_matriz = sio.loadmat('newy.mat')
         ys = contenido_matriz['y']
-        Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
-        
+        Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)        
         rndInit = inicializacionAleatoria(25*901+10*26)
-        respuesta =  sc.fmin_cg(calculateJ, rndInit, calculateGrad, maxiter=100,  disp=True, callback=callback)
-        Theta1 = np.reshape(respuesta[:num_hidden*(num_input+1)], (num_hidden,-1))
-        Theta2 = np.reshape(respuesta[num_hidden*(num_input+1):], (num_lables,-1))
-
+        print("qweqweqwe")
+        #respuesta =  sc.fmin_cg(calculateJ, rndInit, calculateGrad, maxiter=100,  disp=True, callback=callback)
+        respuesta = sc.minimize(calculateJ,rndInit, jac=calculateGrad ,method="Newton-CG", options={'maxiter':100, 'disp':True}, callback=callback)
+        print("asdasdasd")
+        Theta1 = np.reshape(respuesta[:num_ocultas*(num_entradas+1)], (num_ocultas,-1))
+        Theta2 = np.reshape(respuesta[num_ocultas*(num_entradas+1):], (num_lables,-1))
         precision = obtenerPrecision(probabilidadesParaDibujar(Theta1, Theta2, Xtest), ytest)
         sio.savemat('scaledTheta.mat', {'t': respuesta, 'acc': precision})
         pantalla.fill((0, 0, 0))
@@ -278,7 +279,7 @@ def dibujarPixeles(A, pantalla):
   
     A = A.ravel()
     A = (255-A*255).transpose()
-    tamanio = 25
+    tamanio = 30
     for x in range(tamanio):
         for y in range(tamanio):
             z=x*30+y
@@ -294,7 +295,7 @@ def dibujarEstadisticas(pantalla):
     Xs = contenido_mat['X']
     contenido_mat = sio.loadmat('newy.mat')
     ys = contenido_mat['y']
-    Xtrain, Xtest, ytrain, ytest = splitData(Xs,ys)
+    Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
     contenido_mat = sio.loadmat('scaledTheta.mat')
     acc = float(contenido_mat['acc'])
     y = ys.ravel().tolist()
@@ -334,7 +335,7 @@ def backProp(p, numero_de_entrada, numero_oculto, numero_de_etiquetas, X, valor_
     delta1 = 0
     delta2 = 0
     for t in range(m):
-
+        print(t)
         a1 = np.matrix(np.append([1],X[t],axis=1)).transpose()
         z2 = Theta1*a1
         a2 = np.append(np.ones(shape=(1,z2.shape[1])), sigmoid(z2),axis=0)
@@ -373,7 +374,6 @@ def J(theta, numero_de_entrada, numero_oculto, numero_de_etiquetas,X, valor_de_y
 
 def calculateGrad(p):
     """Metodo Backpropagation para optimizar"""
-    
     return backProp(p, 900, 25, 10, Xentrenamiento,yentrenamiento)
     
 def calculateJ(p):
@@ -452,7 +452,6 @@ def main():
         
         pantalla.blit(fondo, (0, 0))
         pygame.display.flip()
-
         
 if __name__ == "__main__":
     main()

@@ -89,7 +89,6 @@ def calcularImagen(fondo, pantalla, Theta1, Theta2, ancho_de_linea):
         superficie_recortada =  pygame.Surface((dx,dy))
         superficie_recortada.blit(fondo,(0,0),(x[0],y[0],x[1],y[1]), special_flags=BLEND_RGBA_MAX)
         fondo_escalado = pygame.transform.smoothscale(superficie_recortada, (30, 30))
-            
         imagen = pygame.surfarray.array3d(fondo_escalado)
         imagen = abs(1-imagen/253)
         imagen = np.mean(imagen, 2) 
@@ -98,9 +97,8 @@ def calcularImagen(fondo, pantalla, Theta1, Theta2, ancho_de_linea):
         (valor, prob), (valor2, prob2) = probabilidad(Theta1,Theta2,imagen)
         prob = round(prob,1)
         prob2 = round(prob2, 1)
-                   
         label_estadisticas = mostrarEstadisticas(ancho_de_linea, valor, prob)
-        label_estadisticas_2 = showStatsSmall(ancho_de_linea, valor2, prob2)
+        label_estadisticas_2 = mostrarEstadisticasPequenia(ancho_de_linea, valor2, prob2)
         (x,y) = pantalla.get_size()
         pantalla.blit(label_estadisticas, (17, y-90))
         pantalla.blit(label_estadisticas_2, (20, y-38))
@@ -126,11 +124,12 @@ def probabilidad(Theta1, Theta2, X):
     l1 = heapq.nlargest(2, l0)
     prob2 = l1[1]
     estima2 = int(np.where(l0==l1[1])[0]+1)
-    estima2 = estima2 if estimate2<10 else 0
+    estima2 = estima2 if estima2<10 else 0
     number = int(prob.argmax(0).transpose())
     estima = number+1 if number<9 else 0
+    print (estima, float(prob[number])*100), (estima2, prob2*100)
+    return (estima, float(prob[number])*100), (estima2, prob2*100)
 
-    return (estima, float(prob[number])*100), (estima2, proba2*100)
 
 
 def probabilidadesParaDibujar(Theta1, Theta2, X):
@@ -244,7 +243,7 @@ def probarTeclas(datos):
         ys = contenido_matriz['y']
         Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
         
-        rndInit = randomInitialization(25*901+10*26)
+        rndInit = inicializacionAleatoria(25*901+10*26)
         respuesta =  sc.fmin_cg(calculateJ, rndInit, calculateGrad, maxiter=100,  disp=True, callback=callback)
         Theta1 = np.reshape(respuesta[:num_hidden*(num_input+1)], (num_hidden,-1))
         Theta2 = np.reshape(respuesta[num_hidden*(num_input+1):], (num_lables,-1))
@@ -260,7 +259,7 @@ def probarTeclas(datos):
     return datos
 
 
-def dibujarEstadisticas(ancho_de_linea, valor, probabilidad):
+def mostrarEstadisticas(ancho_de_linea, valor, probabilidad):
     """ Muestra las estadisticas actuales """
     
     fuente = pygame.font.SysFont("Verdana", 50)
@@ -268,14 +267,14 @@ def dibujarEstadisticas(ancho_de_linea, valor, probabilidad):
     return fuente.render(estadisticas+"%", 1, ((255, 255, 255)))
 
 
-def dibujarEstadisticasPequenia(ancho_de_linea, valor, probabilidad):
+def mostrarEstadisticasPequenia(ancho_de_linea, valor, probabilidad):
 
     fuente = pygame.font.SysFont("Verdana", 25)
     estadisticas = "Second estimate: %s (%s" % (valor, probabilidad)
     return fuente.render(estadisticas+"%)", 1, ((235, 235, 235)))
 
-def dibujarPixelated(A, pantalla):  
-    """dibujar 30x30 imagen para entrada""" 
+def dibujarPixeles(A, pantalla):  
+    """dibuja una imagen de 30x30 a partir de una entrada""" 
   
     A = A.ravel()
     A = (255-A*255).transpose()
@@ -375,11 +374,11 @@ def J(theta, numero_de_entrada, numero_oculto, numero_de_etiquetas,X, valor_de_y
 def calculateGrad(p):
     """Metodo Backpropagation para optimizar"""
     
-    return backProp(p, 900, 25, 10, Xtrain,ytrain)
+    return backProp(p, 900, 25, 10, Xentrenamiento,yentrenamiento)
     
 def calculateJ(p):
     """Metodo de costo para optimizar"""
-    return J(p, 900, 25, 10, Xtrain, ytrain)
+    return J(p, 900, 25, 10, Xentrenamiento, yentrenamiento)
 
 def callback(p):
     """Actualiza la GUI mientras se entrena la red neuronal"""
@@ -447,7 +446,7 @@ def main():
 
             elif evento.type == pygame.KEYDOWN:
                 misDatos = (evento, fondo, color_de_dibujo, ancho_de_linea, sigue, pantalla, imagen)
-                misDatos = checkKeys(misDatos)
+                misDatos = probarTeclas(misDatos)
                 (evento, fondo, color_de_dibujo, ancho_de_linea, sigue) = misDatos
         
         

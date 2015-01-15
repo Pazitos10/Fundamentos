@@ -4,8 +4,13 @@ from RNA import RedNeuronal
 import scipy.io as sio
 import numpy as np
 import scipy.optimize as sc
+import ast
 #import ipdb
 
+#abrimos archivo principal una sola vez
+scaled_theta_file = open('scaledTheta.txt','rw')
+contenido_mat = scaled_theta_file.readline()
+contenido_mat = ast.literal_eval(contenido_mat)
 
 hubo_cambio = False
 total = 0
@@ -72,6 +77,7 @@ def calcularImagen(fondo, pantalla, Theta1, Theta2, ancho_de_linea, rna):
         (valor, prob), (valor2, prob2) = rna.probabilidad(Theta1,Theta2,imagen)
         prob = round(prob,1)
         prob2 = round(prob2, 1)
+        print prob, prob2 
         label_estadisticas = mostrarEstadisticas(ancho_de_linea, valor, prob)
         label_estadisticas_2 = mostrarEstadisticasPequenia(ancho_de_linea, valor2, prob2)
         (x,y) = pantalla.get_size()
@@ -123,7 +129,7 @@ def probarTeclas(datos, rna):
         pantalla.blit(fuente2.render("Neural network training in progress...", 1, ((50, 50, 50))), (368, 150))
         pantalla.blit(fuente3.render("Depending on the training data size this could take long time", 1, ((80, 80, 80))), (370, 190))
         pygame.display.flip()
-        global Xentrenamiento; global Xprueba; global yentrenamiento; global yprueba
+        global Xentrenamiento; global Xprueba; global yentrenamiento; global yprueba; global contenido_mat; global scaled_theta_file
         contenido_matriz = sio.loadmat('newX.mat')
         Xs = contenido_matriz['X']
         contenido_matriz = sio.loadmat('newy.mat')
@@ -136,7 +142,12 @@ def probarTeclas(datos, rna):
         Theta1 = np.reshape(respuesta[:rna.capas_ocultas*(rna.numero_de_entradas+1)], (rna.capas_ocultas,-1))
         Theta2 = np.reshape(respuesta[rna.capas_ocultas*(rna.numero_de_entradas+1):], (10,-1)) #reemplazar 10 por rna.numero_de_salidas
         precision = rna.obtenerPrecision(rna.probabilidadesParaDibujar(Theta1, Theta2, Xentrenamiento), yentrenamiento)
-        sio.savemat('scaledTheta.mat', {'t': respuesta, 'acc': precision})
+        #sio.savemat('scaledTheta.mat', {'t': respuesta, 'acc': precision})
+        contenido_mat.update({'t': contenido_mat['t'].append(respuesta.tolist()), 'precision': contenido_mat['precision']+precision })
+        print scaled_theta_file
+        scaled_theta_file.write(str(contenido_mat))
+
+        
         pantalla.fill((0, 0, 0))
         fondo.fill((255, 255, 255))
     elif evento.key == pygame.K_v:
@@ -239,8 +250,13 @@ def dibujarEstadisticas(pantalla):
     contenido_mat = sio.loadmat('newy.mat')
     ys = contenido_mat['y']
     Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
-    contenido_mat = sio.loadmat('scaledTheta.mat')
-    acc = float(contenido_mat['acc'])
+    #contenido_mat = sio.loadmat('scaledTheta.mat')
+    #acc = float(contenido_mat['acc'])
+#    f = open('scaledTheta.txt','r')
+#    contenido_mat = f.readline()
+#    contenido_mat = ast.literal_eval(contenido_mat)
+#    print(contenido_mat)
+
     y = ys.ravel().tolist()
 
     myFont = pygame.font.SysFont("Verdana", 24)
@@ -248,7 +264,7 @@ def dibujarEstadisticas(pantalla):
     myFont3 = pygame.font.SysFont("Verdana", 16)
     pygame.draw.rect(pantalla,(255,255,255),(370,0,730,360))
     pantalla.blit(myFont.render("Muestras: %d" % (Xs.shape[0]), 1, ((0, 0, 0))), (400, 30))
-    pantalla.blit(myFont.render("Precision: %s" % str(acc)+"%", 1, ((0, 0, 0))), (400, 60))
+    pantalla.blit(myFont.render("Precision: %s" % str(contenido_mat['precision'])+"%", 1, ((0, 0, 0))), (400, 60))
     pantalla.blit(myFont3.render("DISTRIBUCION DE LA MUESTRA:", 1, ((0, 0, 0))), (400, 100))
     pantalla.blit(myFont2.render("Total 0 = %s" % (y.count(0)), 1, ((0, 0, 0))), (400, 120))
     for i in range(9):
@@ -274,7 +290,7 @@ def dividirDatos(X, y):
 
 
 def main():
-    global pantalla
+    global pantalla, contenido_mat
     pygame.init()
     pantalla = pygame.display.set_mode((730, 450))
     pygame.display.set_caption("Reconocimiento de caracteres")
@@ -289,9 +305,9 @@ def main():
     linea_de_inicio = (0, 0)
     color_de_dibujo = (255, 0, 0)
     ancho_de_linea = 15
-    
-    inputTheta = sio.loadmat('scaledTheta.mat')
-    theta = inputTheta['t']
+
+
+    theta = contenido_mat['t']
     
     redNeuronal = RedNeuronal(900,25,10)
     print redNeuronal.numero_de_entradas, redNeuronal.capas_ocultas, redNeuronal.numero_de_salidas
@@ -330,3 +346,4 @@ def main():
         
 if __name__ == "__main__":
     main()
+    scaled_theta_file.close()

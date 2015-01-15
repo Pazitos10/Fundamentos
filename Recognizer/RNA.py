@@ -27,9 +27,9 @@ class RedNeuronal():
         """Clasifica el numero y calcula la probabilidad"""
         X = np.append(np.ones(shape=(X.shape[0],1)),X,axis=1)
         input = Theta1*np.matrix(X.transpose())
-        self.capas_ocultas = self.sigmoide(input)
-        self.capas_ocultas = np.append(np.ones(shape=(1,self.capas_ocultas.shape[1])),self.capas_ocultas,axis=0)
-        prob = self.sigmoide(Theta2*self.capas_ocultas)
+        capas_ocultas = self.sigmoide(input)
+        capas_ocultas = np.append(np.ones(shape=(1,capas_ocultas.shape[1])),capas_ocultas,axis=0)
+        prob = self.sigmoide(Theta2*capas_ocultas)
         l0 = np.array(prob.ravel())[0]
         l1 = heapq.nlargest(2, l0)
         prob2 = l1[1]
@@ -57,13 +57,15 @@ class RedNeuronal():
 
     def backProp(self,p, X, valor_de_y, l=0.2):
         """Backpropagation algorithm of neural network"""
+        #print "wtf", self.capas_ocultas, self.numero_de_entradas+1
+        #print "algo"
         Theta1 = np.reshape(p[:self.capas_ocultas*(self.numero_de_entradas+1)], (self.capas_ocultas,-1))
         Theta2 = np.reshape(p[self.capas_ocultas*(self.numero_de_entradas+1):], (self.numero_de_salidas,-1))
         m = len(X)
         delta1 = 0
         delta2 = 0
         for t in range(m):
-            print(t)
+            
             a1 = np.matrix(np.append([1],X[t],axis=1)).transpose()
             z2 = Theta1*a1
             a2 = np.append(np.ones(shape=(1,z2.shape[1])), self.sigmoide(z2),axis=0)

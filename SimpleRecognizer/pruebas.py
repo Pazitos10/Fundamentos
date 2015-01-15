@@ -56,7 +56,8 @@ z_pattern -= 1
 
 
 #flatten unifica todas las filas+columnas 
-input_patterns = np.array([z_pattern.flatten(),l_pattern.flatten()])
+input_patterns = np.array([c_pattern.flatten(), z_pattern.flatten(), l_pattern.flatten(), ])
+print input_patterns
 
 #Create the neural network and train it using the training patterns
 network = HopfieldNetwork(100)

@@ -15,6 +15,6 @@ def hebbian_training(network, input_patterns):
                 weights[i, j] += input_patterns[m][i] * input_patterns[m][j]
                 
     weights *= 1/float(n)
-    
+
     network.set_weights(weights)
     

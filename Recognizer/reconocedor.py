@@ -292,12 +292,12 @@ def main():
     
     inputTheta = sio.loadmat('scaledTheta.mat')
     theta = inputTheta['t']
-    numero_de_etiquetas = 10
-
-    redNeuronal = RedNeuronal(900,25)
+    
+    redNeuronal = RedNeuronal(900,25,10)
+    print redNeuronal.numero_de_entradas, redNeuronal.capas_ocultas, redNeuronal.numero_de_salidas
 
     Theta1 = np.reshape(theta[:redNeuronal.capas_ocultas*(redNeuronal.numero_de_entradas+1)], (redNeuronal.capas_ocultas,-1))
-    Theta2 = np.reshape(theta[redNeuronal.capas_ocultas*(redNeuronal.numero_de_entradas+1):], (numero_de_etiquetas,-1))
+    Theta2 = np.reshape(theta[redNeuronal.capas_ocultas*(redNeuronal.numero_de_entradas+1):], (redNeuronal.numero_de_salidas,-1))
 
     pygame.display.update()
     imagen = None

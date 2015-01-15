@@ -4,9 +4,10 @@ import heapq
 
 class RedNeuronal():
 
-    def __init__(self, nro_de_entradas, capas_ocultas):
+    def __init__(self, nro_de_entradas, capas_ocultas, nro_de_salidas):
         self.numero_de_entradas = nro_de_entradas
         self.capas_ocultas = capas_ocultas
+        self.numero_de_salidas = nro_de_salidas
         print "cree la red neuronal"
 
     def sigmoide(self,z):
@@ -54,10 +55,10 @@ class RedNeuronal():
         return np.random.rand(i,1)*2*epsilon-epsilon
 
 
-    def backProp(self,p, numero_de_etiquetas, X, valor_de_y, l=0.2):
+    def backProp(self,p, X, valor_de_y, l=0.2):
         """Backpropagation algorithm of neural network"""
         Theta1 = np.reshape(p[:self.capas_ocultas*(self.numero_de_entradas+1)], (self.capas_ocultas,-1))
-        Theta2 = np.reshape(p[self.capas_ocultas*(self.numero_de_entradas+1):], (numero_de_etiquetas,-1))
+        Theta2 = np.reshape(p[self.capas_ocultas*(self.numero_de_entradas+1):], (self.numero_de_salidas,-1))
         m = len(X)
         delta1 = 0
         delta2 = 0
@@ -68,7 +69,7 @@ class RedNeuronal():
             a2 = np.append(np.ones(shape=(1,z2.shape[1])), self.sigmoide(z2),axis=0)
             z3 = Theta2*a2
             a3 = self.sigmoide(z3)
-            w = np.zeros((numero_de_etiquetas,1))
+            w = np.zeros((self.numero_de_salidas,1))
             w[int(valor_de_y[t])-1] = 1
             d3 = (a3-w)
             d2 = np.multiply(Theta2[:,1:].transpose()*d3, self.gradientesigmoide(z2))
@@ -81,11 +82,11 @@ class RedNeuronal():
        
         return self.unirVectores(Theta1_grad, Theta2_grad)
 
-    def J(self,theta, numero_de_etiquetas,X, valor_de_y, l=0.2):
+    def J(self,theta, X, valor_de_y, l=0.2):
         """Cost funtion"""
         
         Theta1 = np.reshape(theta[:self.capas_ocultas*(self.numero_de_entradas+1)], (self.capas_ocultas,-1))
-        Theta2 = np.reshape(theta[self.capas_ocultas*(self.numero_de_entradas+1):], (numero_de_etiquetas,-1))
+        Theta2 = np.reshape(theta[self.capas_ocultas*(self.numero_de_entradas+1):], (self.numero_de_salidas,-1))
         m = len(X)
         X = np.append(np.ones(shape=(X.shape[0],1)),X,axis=1)
         J = 0
@@ -101,11 +102,11 @@ class RedNeuronal():
 
     def calculateGrad(self,p, Xentrenamiento, yentrenamiento):
         """Metodo Backpropagation para optimizar"""
-        return self.backProp(p,10, Xentrenamiento,yentrenamiento)
+        return self.backProp(p, Xentrenamiento,yentrenamiento)
         
     def calculateJ(self,p, Xentrenamiento, yentrenamiento):
         """Metodo de costo para optimizar"""
-        return self.J(p, 10, Xentrenamiento, yentrenamiento)
+        return self.J(p, Xentrenamiento, yentrenamiento)
 
     def probabilidadesParaDibujar(self, Theta1, Theta2, X):
         """Calcula las probabilidades de prediccion"""

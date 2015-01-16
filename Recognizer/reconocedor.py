@@ -12,6 +12,11 @@ import ast, os
 scaled_theta_file = open('scaledTheta.txt','a+')
 contenido_mat = scaled_theta_file.readline()
 contenido_mat = ast.literal_eval(contenido_mat)
+X_file = open("primerosX.txt","a+")
+contenido_X = ast.literal_eval(X_file.readline())
+y_file = open("primerosY.txt","a+")
+contenido_Y = ast.literal_eval(y_file.readline())
+
 hubo_cambio = False
 total = 0
 Xentrenamiento, Xprueba, yentrenamiento, yprueba = [], [], [], []
@@ -96,24 +101,40 @@ def probarTeclas(datos, rna):
         fondo.fill((255, 255, 255))
         dibujarPixeles(np.zeros((30,30)), pantalla)
     elif evento.key == pygame.K_s:
-        global hubo_cambio
+        global hubo_cambio, contenido_X, contenido_Y
         try:
-            contenido_matriz = sio.loadmat('newX.mat')
-            X = contenido_matriz['X']
-            print imagen
-            X = np.append(X,imagen, axis=0)
+            X = np.array(contenido_X)
+            print type(X), type(imagen.getA())
+            X = np.append(X,imagen.getA(), axis=0)
         except:
-            X = imagen
+            print "excepcion X"
+            X = imagen.getA()
         respuesta = np.matrix(int(consultar(pantalla, "")))
         try:
-            contenido_matriz = sio.loadmat('newy.mat')
-            y = contenido_matriz['y']
-            y = np.append(y,respuesta, axis=0)
+            y = np.array(contenido_Y)
+            y = np.append(y,respuesta.getA(), axis=0)
         except:
-            y = respuesta
+            print "excepcion Y"
+            y = respuesta.getA()
         if hubo_cambio:
-            sio.savemat('newX.mat', {'X': X})
-            sio.savemat('newy.mat', {'y': y})
+            global X_file, y_file
+            f = open("tempX.txt","w")
+            f.write(str(X.tolist()))
+            f.close()
+            X_file.close()
+            os.remove("primerosX.txt")
+            os.rename("tempX.txt","primerosX.txt")
+            X_file = open("primerosX.txt","a+")
+            contenido_X = ast.literal_eval(X_file.readline())
+            f = open("tempY.txt","w")
+            f.write(str(y.tolist()))
+            f.close()
+            y_file.close()
+            os.remove("primerosY.txt")
+            os.rename("tempY.txt","primerosY.txt")
+            y_file = open("primerosY.txt","a+")
+            contenido_Y = ast.literal_eval(y_file.readline())
+
             hubo_cambio = False
 
         fondo.fill((255, 255, 255))
@@ -256,12 +277,9 @@ def mostrarEstadisticasPequenia(ancho_de_linea, valor, probabilidad):
 
 def dibujarEstadisticas(pantalla):  
     """Dibuja las estadisticas en la pantalla"""
-    global contenido_mat
-
-    contenido_X = sio.loadmat('newX.mat')
-    Xs = contenido_X['X']
-    contenido_y = sio.loadmat('newy.mat')
-    ys = contenido_y['y']
+    global contenido_mat, contenido_X, contenido_Y
+    Xs = np.array(contenido_X)
+    ys = np.array(contenido_Y)
     Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
 
     y = ys.ravel().tolist()
@@ -278,7 +296,7 @@ def dibujarEstadisticas(pantalla):
 
 def dividirDatos(X, y):
     """Divide la muestra de datos en un conjunto de entrenamiento (80%) y uno de prueba (20%)"""
-    
+    print X.shape[0]
     tamanio1 = X.shape[0] * 0.8
     tamanio2 = X.shape[0] * 0.2
     Xentrenamiento = np.zeros((tamanio1,X.shape[1]))

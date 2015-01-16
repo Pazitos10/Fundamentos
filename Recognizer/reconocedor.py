@@ -149,11 +149,9 @@ def probarTeclas(datos, rna):
         pantalla.blit(fuente2.render("La red neuronal se esta entrenando...", 1, ((50, 50, 50))), (148, 150))
         pantalla.blit(fuente3.render("Este proceso puede demorar algunos minutos", 1, ((80, 80, 80))), (150, 190))
         pygame.display.flip()
-        global Xentrenamiento; global Xprueba; global yentrenamiento; global yprueba; global contenido_mat; global scaled_theta_file
-        contenido_matriz = sio.loadmat('newX.mat')
-        Xs = contenido_matriz['X']
-        contenido_matriz = sio.loadmat('newy.mat')
-        ys = contenido_matriz['y']
+        global Xentrenamiento; global Xprueba; global yentrenamiento; global yprueba; global scaled_theta_file; global contenido_X, contenido_Y
+        Xs = np.array(contenido_X)
+        ys = np.array(contenido_Y)
         Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)        
         rndInit = rna.inicializacionAleatoria(25*901+10*26)
         parametros = (Xentrenamiento,yentrenamiento)
@@ -162,18 +160,13 @@ def probarTeclas(datos, rna):
         #np.set_printoptions(threshold='nan')
 
         respuesta =  sc.fmin_cg(rna.calculateJ, rndInit, fprime=rna.calculateGrad, maxiter=100,  disp=True, callback=callback, args = parametros)
-        
-        Theta1 = np.reshape(respuesta[:rna.capas_ocultas*(rna.numero_de_entradas+1)], (rna.capas_ocultas,-1))
-        Theta2 = np.reshape(respuesta[rna.capas_ocultas*(rna.numero_de_entradas+1):], (rna.numero_de_salidas,-1)) #reemplazar 10 por rna.numero_de_salidas
-        #sio.savemat('scaledTheta.mat'
-        
+           
         respuesta_aux = []
         for item in respuesta:
             respuesta_aux.append([item])
         
-        contenido_mat['t'] = respuesta_aux
         f = open("otro.txt","w")
-        f.write(str(contenido_mat))
+        f.write(str(respuesta_aux))
         f.close()
         scaled_theta_file.close()
         os.remove("scaledTheta.txt")
@@ -296,7 +289,8 @@ def dibujarEstadisticas(pantalla):
 
 def dividirDatos(X, y):
     """Divide la muestra de datos en un conjunto de entrenamiento (80%) y uno de prueba (20%)"""
-    print X.shape[0]
+    print len(X), len(y)
+
     tamanio1 = X.shape[0] * 0.8
     tamanio2 = X.shape[0] * 0.2
     Xentrenamiento = np.zeros((tamanio1,X.shape[1]))

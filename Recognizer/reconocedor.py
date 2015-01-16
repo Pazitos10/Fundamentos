@@ -4,7 +4,7 @@ from RNA import RedNeuronal
 import scipy.io as sio
 import numpy as np
 import scipy.optimize as sc
-import ast
+import ast, os
 
 #abrimos archivo principal una sola vez
 #import ipdb
@@ -100,6 +100,7 @@ def probarTeclas(datos, rna):
         try:
             contenido_matriz = sio.loadmat('newX.mat')
             X = contenido_matriz['X']
+            print imagen
             X = np.append(X,imagen, axis=0)
         except:
             X = imagen
@@ -139,48 +140,26 @@ def probarTeclas(datos, rna):
         #para mostrar la matriz completa sin ..., habilitar la siguiente linea
         #np.set_printoptions(threshold='nan')
 
-        #respuesta =  sc.fmin_cg(rna.calculateJ, rndInit, rna.calculateGrad, maxiter=100,  disp=True, callback=callback, args = parametros)
-        respuesta = sc.minimize(rna.calculateJ,rndInit,args=parametros,method="Nelder-Mead", options={'maxiter':100, 'disp':True}, callback=callback)
+        respuesta =  sc.fmin_cg(rna.calculateJ, rndInit, fprime=rna.calculateGrad, maxiter=100,  disp=True, callback=callback, args = parametros)
         
         Theta1 = np.reshape(respuesta[:rna.capas_ocultas*(rna.numero_de_entradas+1)], (rna.capas_ocultas,-1))
         Theta2 = np.reshape(respuesta[rna.capas_ocultas*(rna.numero_de_entradas+1):], (rna.numero_de_salidas,-1)) #reemplazar 10 por rna.numero_de_salidas
-        precision = rna.obtenerPrecision(rna.probabilidadesParaDibujar(Theta1, Theta2, Xentrenamiento), yentrenamiento)
-        #sio.savemat('scaledTheta.mat', {'t': respuesta, 'acc': precision})
+        #sio.savemat('scaledTheta.mat'
         
         respuesta_aux = []
         for item in respuesta:
             respuesta_aux.append([item])
         
-        #largo = len(contenido_mat['t'])-1
-        #print "ANTES: ultimo en contenido['t']", contenido_mat['t'][largo:] 
-        #largo = len(respuesta)-1
-        #print "ANTES: ultimo en respuesta", respuesta[largo:] 
-        #prueba = contenido_mat['t']
-        #prueba.extend(respuesta)
-        #largo = len(prueba)-1
-        #print "DESPUES: luego de extend, ultimo en contenido['t']", prueba[largo:]
-        
+        contenido_mat['t'] = respuesta_aux
+        f = open("otro.txt","w")
+        f.write(str(contenido_mat))
+        f.close()
+        scaled_theta_file.close()
+        os.remove("scaledTheta.txt")
+        os.rename("otro.txt","scaledTheta.txt")
+        scaled_theta_file = open("scaledTheta.txt","a+")
         # import ipdb
-        # ipdb.set_trace()
-
-        #contenido_mat['precision']+= precision
-        #contenido_mat.update({'t': contenido_mat['t'].extend(respuesta), 'precision': contenido_mat['precision']+precision })
-        #
-        #scaled_theta_file.seek(0)
-        #scaled_theta_file.write(str(contenido_mat)+"asdasd")
-        
-        #print "len contenido['t']", len(contenido_mat['t'])
-        #print "len respuesta_aux", len(respuesta_aux)
-        
-        #contenido_mat['t'].extend(respuesta_aux)
-
-        #print "len contenido_mat['t']+respuesta_aux ", len(contenido_mat['t'])
-        
-
-        #f = open("otro.txt","w")
-        #f.write(str(contenido_mat['t']))
-        #f.close()
-
+        # ipdb.set_trace()        
         pantalla.fill((0, 0, 0))
         fondo.fill((255, 255, 255))
     elif evento.key == pygame.K_v:
@@ -284,12 +263,6 @@ def dibujarEstadisticas(pantalla):
     contenido_y = sio.loadmat('newy.mat')
     ys = contenido_y['y']
     Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
-    #contenido_mat = sio.loadmat('scaledTheta.mat')
-    #acc = float(contenido_mat['acc'])
-#    f = open('scaledTheta.txt','r')
-#    contenido_mat = f.readline()
-#    contenido_mat = ast.literal_eval(contenido_mat)
-#    print(contenido_mat)
 
     y = ys.ravel().tolist()
 
@@ -298,7 +271,6 @@ def dibujarEstadisticas(pantalla):
     myFont3 = pygame.font.SysFont("Verdana", 16)
     pygame.draw.rect(pantalla,(255,255,255),(370,0,730,360))
     pantalla.blit(myFont.render("Muestras: %d" % (Xs.shape[0]), 1, ((0, 0, 0))), (400, 30))
-    pantalla.blit(myFont.render("Precision: %s" % str(contenido_mat['precision'])+"%", 1, ((0, 0, 0))), (400, 60))
     pantalla.blit(myFont3.render("DISTRIBUCION DE LA MUESTRA:", 1, ((0, 0, 0))), (400, 100))
     pantalla.blit(myFont2.render("Total 0 = %s" % (y.count(0)), 1, ((0, 0, 0))), (400, 120))
     for i in range(9):
@@ -307,8 +279,8 @@ def dibujarEstadisticas(pantalla):
 def dividirDatos(X, y):
     """Divide la muestra de datos en un conjunto de entrenamiento (80%) y uno de prueba (20%)"""
     
-    tamanio1 = X.shape[0] * 0.9
-    tamanio2 = X.shape[0] * 0.1
+    tamanio1 = X.shape[0] * 0.8
+    tamanio2 = X.shape[0] * 0.2
     Xentrenamiento = np.zeros((tamanio1,X.shape[1]))
     Xprueba = np.zeros((tamanio2,X.shape[1]))
     yentrenamiento = np.zeros((tamanio1,1))

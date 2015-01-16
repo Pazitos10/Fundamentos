@@ -40,19 +40,6 @@ class RedNeuronal():
         estima = number+1 if number<9 else 0
         return (estima, float(prob[number])*100), (estima2, prob2*100)
 
-    def obtenerPrecision(self,prob, y):
-        """Calcula la precision de la prediccion"""
-        total = 0
-        for i in range(len(prob)):
-            #import ipdb
-            #ipdb.set_trace()
-            if int(prob[i]) == int(y[i]):
-                total += 1
-            elif int(prob[i]) >= 10 and int(y[i]) == 1:
-                total += 1
-        print round((total/len(prob))*100,2)
-        return round((total/len(prob))*100,2)
-
 
     def inicializacionAleatoria(self,i, epsilon=0.12):
         """Para la ruptura de la simetria inicializar thetas al azar"""
@@ -111,13 +98,3 @@ class RedNeuronal():
     def calculateJ(self,p, Xentrenamiento, yentrenamiento):
         """Metodo de costo para optimizar"""
         return self.J(p, Xentrenamiento, yentrenamiento)
-
-    def probabilidadesParaDibujar(self, Theta1, Theta2, X):
-        """Calcula las probabilidades de prediccion"""
-        X = np.append(np.ones(shape=(X.shape[0],1)),X,axis=1)
-        input = Theta1*np.matrix(X.transpose())
-        capa_oculta = self.sigmoide(input)
-        capa_oculta = np.append(np.ones(shape=(1,capa_oculta.shape[1])),capa_oculta,axis=0)
-        proba = self.sigmoide(Theta2*capa_oculta)
-        numbers = proba.argmax(0).transpose()+1
-        return numbers

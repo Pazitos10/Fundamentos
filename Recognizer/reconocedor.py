@@ -5,13 +5,13 @@ import scipy.io as sio
 import numpy as np
 import scipy.optimize as sc
 import ast
-#import ipdb
 
 #abrimos archivo principal una sola vez
-scaled_theta_file = open('scaledTheta.txt','rw')
+#import ipdb
+#ipdb.set_trace()
+scaled_theta_file = open('scaledTheta.txt','a+')
 contenido_mat = scaled_theta_file.readline()
 contenido_mat = ast.literal_eval(contenido_mat)
-
 hubo_cambio = False
 total = 0
 Xentrenamiento, Xprueba, yentrenamiento, yprueba = [], [], [], []
@@ -19,7 +19,6 @@ pantalla = None
 
 def calcularImagen(fondo, pantalla, Theta1, Theta2, ancho_de_linea, rna):
     """Corta y redimensiona la entrada"""
-    #ipdb.set_trace()
     global hubo_cambio
     superficie_de_foco = pygame.surfarray.array3d(fondo)
     foco = abs(1-superficie_de_foco/255)
@@ -77,7 +76,6 @@ def calcularImagen(fondo, pantalla, Theta1, Theta2, ancho_de_linea, rna):
         (valor, prob), (valor2, prob2) = rna.probabilidad(Theta1,Theta2,imagen)
         prob = round(prob,1)
         prob2 = round(prob2, 1)
-        print prob, prob2 
         label_estadisticas = mostrarEstadisticas(ancho_de_linea, valor, prob)
         label_estadisticas_2 = mostrarEstadisticasPequenia(ancho_de_linea, valor2, prob2)
         (x,y) = pantalla.get_size()
@@ -123,11 +121,11 @@ def probarTeclas(datos, rna):
     elif evento.key == pygame.K_t:
         pantalla.fill((255, 255, 255))
         fuente1 = pygame.font.SysFont("Verdana", 55)
-        fuente2 = pygame.font.SysFont("Verdana", 17)
-        fuente3 = pygame.font.SysFont("Verdana", 9)
-        pantalla.blit(fuente1.render("Please wait!", 1, ((0, 0, 0))), (365, 90))
-        pantalla.blit(fuente2.render("Neural network training in progress...", 1, ((50, 50, 50))), (368, 150))
-        pantalla.blit(fuente3.render("Depending on the training data size this could take long time", 1, ((80, 80, 80))), (370, 190))
+        fuente2 = pygame.font.SysFont("Verdana", 20)
+        fuente3 = pygame.font.SysFont("Verdana", 12)
+        pantalla.blit(fuente1.render("Por favor Espere!", 1, ((0, 0, 0))), (145, 90))
+        pantalla.blit(fuente2.render("La red neuronal se esta entrenando...", 1, ((50, 50, 50))), (148, 150))
+        pantalla.blit(fuente3.render("Este proceso puede demorar algunos minutos", 1, ((80, 80, 80))), (150, 190))
         pygame.display.flip()
         global Xentrenamiento; global Xprueba; global yentrenamiento; global yprueba; global contenido_mat; global scaled_theta_file
         contenido_matriz = sio.loadmat('newX.mat')
@@ -137,17 +135,52 @@ def probarTeclas(datos, rna):
         Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)        
         rndInit = rna.inicializacionAleatoria(25*901+10*26)
         parametros = (Xentrenamiento,yentrenamiento)
-        respuesta =  sc.fmin_cg(rna.calculateJ, rndInit, rna.calculateGrad, maxiter=100,  disp=True, callback=callback, args = parametros)
-        #respuesta = sc.minimize(calculateJ,rndInit, jac=calculateGrad ,method="BFGS", options={'maxiter':100, 'disp':True}, callback=callback)
+        
+        #para mostrar la matriz completa sin ..., habilitar la siguiente linea
+        #np.set_printoptions(threshold='nan')
+
+        #respuesta =  sc.fmin_cg(rna.calculateJ, rndInit, rna.calculateGrad, maxiter=100,  disp=True, callback=callback, args = parametros)
+        respuesta = sc.minimize(rna.calculateJ,rndInit,args=parametros,method="Nelder-Mead", options={'maxiter':100, 'disp':True}, callback=callback)
+        
         Theta1 = np.reshape(respuesta[:rna.capas_ocultas*(rna.numero_de_entradas+1)], (rna.capas_ocultas,-1))
-        Theta2 = np.reshape(respuesta[rna.capas_ocultas*(rna.numero_de_entradas+1):], (10,-1)) #reemplazar 10 por rna.numero_de_salidas
+        Theta2 = np.reshape(respuesta[rna.capas_ocultas*(rna.numero_de_entradas+1):], (rna.numero_de_salidas,-1)) #reemplazar 10 por rna.numero_de_salidas
         precision = rna.obtenerPrecision(rna.probabilidadesParaDibujar(Theta1, Theta2, Xentrenamiento), yentrenamiento)
         #sio.savemat('scaledTheta.mat', {'t': respuesta, 'acc': precision})
-        contenido_mat.update({'t': contenido_mat['t'].append(respuesta.tolist()), 'precision': contenido_mat['precision']+precision })
-        print scaled_theta_file
-        scaled_theta_file.write(str(contenido_mat))
-
         
+        respuesta_aux = []
+        for item in respuesta:
+            respuesta_aux.append([item])
+        
+        #largo = len(contenido_mat['t'])-1
+        #print "ANTES: ultimo en contenido['t']", contenido_mat['t'][largo:] 
+        #largo = len(respuesta)-1
+        #print "ANTES: ultimo en respuesta", respuesta[largo:] 
+        #prueba = contenido_mat['t']
+        #prueba.extend(respuesta)
+        #largo = len(prueba)-1
+        #print "DESPUES: luego de extend, ultimo en contenido['t']", prueba[largo:]
+        
+        # import ipdb
+        # ipdb.set_trace()
+
+        #contenido_mat['precision']+= precision
+        #contenido_mat.update({'t': contenido_mat['t'].extend(respuesta), 'precision': contenido_mat['precision']+precision })
+        #
+        #scaled_theta_file.seek(0)
+        #scaled_theta_file.write(str(contenido_mat)+"asdasd")
+        
+        #print "len contenido['t']", len(contenido_mat['t'])
+        #print "len respuesta_aux", len(respuesta_aux)
+        
+        #contenido_mat['t'].extend(respuesta_aux)
+
+        #print "len contenido_mat['t']+respuesta_aux ", len(contenido_mat['t'])
+        
+
+        #f = open("otro.txt","w")
+        #f.write(str(contenido_mat['t']))
+        #f.close()
+
         pantalla.fill((0, 0, 0))
         fondo.fill((255, 255, 255))
     elif evento.key == pygame.K_v:
@@ -191,11 +224,11 @@ def callback(p):
     puntos= []
     if total >= 9:
         total = 1
-        pygame.draw.rect(pantalla,(255,255,255),(355,220,400,250))
+        pygame.draw.rect(pantalla,(255,255,255),(155,220,400,250))
         puntos = []
     for i in range(total):
         puntos.append(".")
-    pantalla.blit(fuente.render("".join(puntos), 1, ((150, 150, 150))), (355, 140))
+    pantalla.blit(fuente.render("".join(puntos), 1, ((150, 150, 150))), (135, 140))
     pygame.display.flip()
 
 
@@ -244,11 +277,12 @@ def mostrarEstadisticasPequenia(ancho_de_linea, valor, probabilidad):
 
 def dibujarEstadisticas(pantalla):  
     """Dibuja las estadisticas en la pantalla"""
+    global contenido_mat
 
-    contenido_mat = sio.loadmat('newX.mat')
-    Xs = contenido_mat['X']
-    contenido_mat = sio.loadmat('newy.mat')
-    ys = contenido_mat['y']
+    contenido_X = sio.loadmat('newX.mat')
+    Xs = contenido_X['X']
+    contenido_y = sio.loadmat('newy.mat')
+    ys = contenido_y['y']
     Xentrenamiento, Xprueba, yentrenamiento, yprueba = dividirDatos(Xs,ys)
     #contenido_mat = sio.loadmat('scaledTheta.mat')
     #acc = float(contenido_mat['acc'])
@@ -273,8 +307,8 @@ def dibujarEstadisticas(pantalla):
 def dividirDatos(X, y):
     """Divide la muestra de datos en un conjunto de entrenamiento (80%) y uno de prueba (20%)"""
     
-    tamanio1 = X.shape[0] * 0.8
-    tamanio2 = X.shape[0] * 0.2
+    tamanio1 = X.shape[0] * 0.9
+    tamanio2 = X.shape[0] * 0.1
     Xentrenamiento = np.zeros((tamanio1,X.shape[1]))
     Xprueba = np.zeros((tamanio2,X.shape[1]))
     yentrenamiento = np.zeros((tamanio1,1))
@@ -310,7 +344,7 @@ def main():
     theta = contenido_mat['t']
     
     redNeuronal = RedNeuronal(900,25,10)
-    print redNeuronal.numero_de_entradas, redNeuronal.capas_ocultas, redNeuronal.numero_de_salidas
+    #print redNeuronal.numero_de_entradas, redNeuronal.capas_ocultas, redNeuronal.numero_de_salidas
 
     Theta1 = np.reshape(theta[:redNeuronal.capas_ocultas*(redNeuronal.numero_de_entradas+1)], (redNeuronal.capas_ocultas,-1))
     Theta2 = np.reshape(theta[redNeuronal.capas_ocultas*(redNeuronal.numero_de_entradas+1):], (redNeuronal.numero_de_salidas,-1))

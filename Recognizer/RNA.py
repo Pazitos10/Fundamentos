@@ -1,6 +1,7 @@
 import scipy.io as sio
 import numpy as np
 import heapq
+import math
 
 class RedNeuronal():
 
@@ -12,7 +13,7 @@ class RedNeuronal():
 
     def sigmoide(self,z):
         """Calcula la funcion sigmoide"""
-        return 1/(1 + np.exp(-z))
+        return 1/(1+np.power(np.e,-z))
 
     def gradientesigmoide(self,z):
         """Gradient of sigmoide function"""
@@ -43,10 +44,13 @@ class RedNeuronal():
         """Calcula la precision de la prediccion"""
         total = 0
         for i in range(len(prob)):
+            #import ipdb
+            #ipdb.set_trace()
             if int(prob[i]) == int(y[i]):
                 total += 1
-            elif int(prob[i]) == 10 and int(y[i]) == 0:
+            elif int(prob[i]) >= 10 and int(y[i]) == 1:
                 total += 1
+        print round((total/len(prob))*100,2)
         return round((total/len(prob))*100,2)
 
 
@@ -57,8 +61,6 @@ class RedNeuronal():
 
     def backProp(self,p, X, valor_de_y, l=0.2):
         """Backpropagation algorithm of neural network"""
-        #print "wtf", self.capas_ocultas, self.numero_de_entradas+1
-        #print "algo"
         Theta1 = np.reshape(p[:self.capas_ocultas*(self.numero_de_entradas+1)], (self.capas_ocultas,-1))
         Theta2 = np.reshape(p[self.capas_ocultas*(self.numero_de_entradas+1):], (self.numero_de_salidas,-1))
         m = len(X)

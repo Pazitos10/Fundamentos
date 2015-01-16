@@ -12,7 +12,7 @@ import pygame.font, pygame.event, pygame.draw
 import scipy.optimize as sc
 from pygame.locals import *
 import heapq
-import ast
+import ast, os
 
 changed = False
 counter = 0
@@ -231,6 +231,7 @@ def checkKeys(myData):
         except:
             y = answer.getA()
         if changed:
+            global X_file, y_file
             f = open("tempX.txt","w")
             f.write(str(X.tolist()))
             f.close()

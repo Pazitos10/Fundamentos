@@ -73,7 +73,7 @@ def calculateImage(background, screen, lineWidth):
         image = np.matrix(image.ravel())
         drawPixelated(image, screen)
         
-        myLabel = showStats(lineWidth, image)
+        myLabel = predictAndShowStats(lineWidth, image)
         (x,y) = screen.get_size()
         screen.blit(myLabel, (17, y-90))
         
@@ -81,7 +81,7 @@ def calculateImage(background, screen, lineWidth):
         image = np.zeros((30,30))
     return image
 
-def showStats(lineWidth, drawnImageData):
+def predictAndShowStats(lineWidth, drawnImageData):
     """ shows the current statistics """
     global ytest, dgc
     predicted = dgc.predict(drawnImageData)
@@ -150,13 +150,10 @@ def simulateTraining():
     mat_contents = sio.loadmat('newy.mat')
     y = mat_contents['y']
     ys = y.ravel()
-
     Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys)
-
     dgc.train(Xtrain,ytrain.ravel()) # entrena
     expected = ytest
     predicted = dgc.predict(Xtest)
-    #acc = "%.2f" % (dgc.getGlobalAccuracy(expected, predicted))
     acc = "%.2f" % (dgc.getGlobalAccuracy(Xs, ys))
 
 

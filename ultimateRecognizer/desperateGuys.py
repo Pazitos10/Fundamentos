@@ -41,16 +41,14 @@ class DesperateGuysClassifier(object):
     
     def splitData(self, X, y):
         global pca, std_scaler
-        #Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=(test_proportion/100), random_state=42)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
         X_train = std_scaler.fit_transform(X_train)
         X_test = std_scaler.transform(X_test) 
         return X_train, X_test, y_train, y_test
 
     def getGlobalAccuracy(self, y_test, y_predicted):
-        #calcula precision por cada muestra y luego calcula la precision global
         global clf
-        #result = metrics.accuracy_score(y_predicted,y_test)
+        #result = metrics.accuracy_score(y_predicted,y_test) #otro modo
         result = cross_validation.cross_val_score(clf,y_test, y_predicted, cv=5, scoring='accuracy')
         result = result.mean()
         result *= 100.0
@@ -62,34 +60,3 @@ class DesperateGuysClassifier(object):
         print("Classification report for classifier %s:\n%s\n"
               % (clf, metrics.classification_report(expected, predicted)))
         print("Confusion matrix:\n%s" % metrics.confusion_matrix(expected, predicted))
-        
-    def getExpected(self):
-        return self.expected
-
-    def getPredicted(self):
-        return self.predicted
-
-    def setPredicted(self, predicted):
-        self.predicted = predicted
-
-    def getX(self):
-        return self.X
-
-
-# #como usarlo: Cargar datos
-# mat_contents = sio.loadmat('newX.mat')
-# Xs = mat_contents['X']
-# mat_contents = sio.loadmat('newy.mat')
-# ys = mat_contents['y'].ravel()
-
-# n_samples = len(Xs) #numero de muestras
-
-# # Enseñarle con fit, previamente dividir los datos .. por ejemplo a la mitad
-# classifier.fit(Xs[:n_samples / 2], ys[:n_samples / 2])
-
-# # Testear con predict con el resto de los datos
-# expected = ys[n_samples / 2:] #esperados 
-# predicted = classifier.predict(Xs[n_samples / 2:]) #obtenidos
-
-
-

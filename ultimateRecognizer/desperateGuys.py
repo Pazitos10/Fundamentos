@@ -50,7 +50,9 @@ class DesperateGuysClassifier(object):
     def getGlobalAccuracy(self, y_test, y_predicted):
         #calcula precision por cada muestra y luego calcula la precision global
         global clf
-        result = metrics.accuracy_score(y_predicted,y_test)
+        #result = metrics.accuracy_score(y_predicted,y_test)
+        result = cross_validation.cross_val_score(clf,y_test, y_predicted, cv=5, scoring='accuracy')
+        result = result.mean()
         result *= 100.0
         print 'accuracy score: %0.2f' % result
         return result

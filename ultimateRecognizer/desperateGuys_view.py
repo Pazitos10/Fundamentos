@@ -156,8 +156,8 @@ def simulateTraining():
     dgc.train(Xtrain,ytrain.ravel()) # entrena
     expected = ytest
     predicted = dgc.predict(Xtest)
-    acc = "%.2f" % (dgc.getGlobalAccuracy(expected, predicted))
-
+    #acc = "%.2f" % (dgc.getGlobalAccuracy(expected, predicted))
+    acc = "%.2f" % (dgc.getGlobalAccuracy(Xs, ys))
 
 
 def display_box(screen, message):

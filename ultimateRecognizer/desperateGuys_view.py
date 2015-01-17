@@ -72,20 +72,20 @@ def calculateImage(background, screen, lineWidth):
         image = np.mean(image, 2) 
         image = np.matrix(image.ravel())
         drawPixelated(image, screen)
-
+        
         myLabel = showStats(lineWidth, image)
         (x,y) = screen.get_size()
         screen.blit(myLabel, (17, y-90))
         
     except:
         image = np.zeros((30,30))
-
-    print "calculate image", image
     return image
 
 def showStats(lineWidth, drawnImageData):
     """ shows the current statistics """
+    global ytest, dgc
     predicted = dgc.predict(drawnImageData)
+    print "predicted", predicted
     myFont = pygame.font.SysFont("Verdana", 50)
     stats = "Predicted : %s" % predicted[0]
     statSurf = myFont.render(stats, 1, ((255, 255, 255)))
@@ -94,7 +94,6 @@ def showStats(lineWidth, drawnImageData):
 
 def checkKeys(myData):
     """test for various keyboard inputs"""
-    
 
     (event, background, drawColor, lineWidth, keepGoing, screen, image) = myData
     
@@ -108,11 +107,8 @@ def checkKeys(myData):
         try:
             mat_contents = sio.loadmat('newX.mat')
             X = mat_contents['X']
-            print "pase load"
-            print type(X), type(image)
             X = np.append(X,image.getA(), axis=0)
         except:
-            print "estoy en except"
             X = image.getA()
         answer = np.matrix(int(ask(screen, "")))
         try:
@@ -154,24 +150,13 @@ def simulateTraining():
     mat_contents = sio.loadmat('newy.mat')
     y = mat_contents['y']
     ys = y.ravel()
-    n_samples = len(Xs) #numero de muestras
 
-
-    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys, 80) #proporcion 80-20 80:Entrenamiento    
-    #Xtrain = Xs[:n_samples / 2]
-    #Xtest =  Xs[n_samples / 2:]
-    #ytrain = ys[:n_samples / 2]
-    #ytest = ys[n_samples / 2:]
-    #dgc.X = Xtest
+    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys)
 
     dgc.train(Xtrain,ytrain.ravel()) # entrena
-    dgc.setPredicted(dgc.predict(Xtest))
     expected = ytest
-    predicted = dgc.getPredicted()
-    acc = dgc.getGlobalAccuracy(expected, predicted)
-
-    sio.savemat('newX.mat', {'X': Xs})
-    sio.savemat('newy.mat', {'y': y})
+    predicted = dgc.predict(Xtest)
+    acc = "%.2f" % (dgc.getGlobalAccuracy(expected, predicted))
 
 
 
@@ -239,7 +224,7 @@ def drawStatistics(screen):
     Xs = mat_contents['X']
     mat_contents = sio.loadmat('newy.mat')
     ys = mat_contents['y']
-    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys, 80)
+    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys)
     #mat_contents = sio.loadmat('scaledTheta.mat')
     accuracy = acc
 

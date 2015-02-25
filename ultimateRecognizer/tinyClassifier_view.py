@@ -7,9 +7,9 @@ from pygame.locals import *
 import pygame.font, pygame.event, pygame.draw
 import scipy.io as sio
 import numpy as np 
-from desperateGuys import DesperateGuysClassifier 
+from tinyClassifier import TinyClassifier 
 screen = None
-dgc = DesperateGuysClassifier()
+classifier = TinyClassifier()
 acc = 0.0
 Xtrain, Xtest, ytrain, ytest = [], [], [], []
 
@@ -83,8 +83,8 @@ def calculateImage(background, screen, lineWidth):
 
 def predictAndShowStats(lineWidth, drawnImageData):
     """ shows the current statistics """
-    global ytest, dgc
-    predicted = dgc.predict(drawnImageData)
+    global ytest, classifier
+    predicted = classifier.predict(drawnImageData)
     print "predicted", predicted
     myFont = pygame.font.SysFont("Verdana", 50)
     stats = "Predicted : %s" % predicted[0]
@@ -144,17 +144,17 @@ def checkKeys(myData):
     return myData
 
 def simulateTraining():
-    global Xtrain; global Xtest; global ytrain; global ytest; global dgc; global acc
+    global Xtrain; global Xtest; global ytrain; global ytest; global classifier; global acc
     mat_contents = sio.loadmat('newX.mat')
     Xs = mat_contents['X']
     mat_contents = sio.loadmat('newy.mat')
     y = mat_contents['y']
     ys = y.ravel()
-    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys)
-    dgc.train(Xtrain,ytrain.ravel()) # entrena
+    Xtrain, Xtest, ytrain, ytest = classifier.splitData(Xs,ys)
+    classifier.train(Xtrain,ytrain.ravel()) # entrena
     expected = ytest
-    predicted = dgc.predict(Xtest)
-    acc = "%.2f" % (dgc.getGlobalAccuracy(Xs, ys))
+    predicted = classifier.predict(Xtest)
+    acc = "%.2f" % (classifier.getGlobalAccuracy(Xs, ys))
 
 
 def display_box(screen, message):
@@ -216,12 +216,12 @@ def drawPixelated(A, screen):
 
 def drawStatistics(screen):  
     """Draw statistics about training set"""
-    global dgc, acc
+    global classifier, acc
     mat_contents = sio.loadmat('newX.mat')
     Xs = mat_contents['X']
     mat_contents = sio.loadmat('newy.mat')
     ys = mat_contents['y']
-    Xtrain, Xtest, ytrain, ytest = dgc.splitData(Xs,ys)
+    Xtrain, Xtest, ytrain, ytest = classifier.splitData(Xs,ys)
     #mat_contents = sio.loadmat('scaledTheta.mat')
     accuracy = acc
 
@@ -274,7 +274,6 @@ def main():
             elif event.type == pygame.MOUSEBUTTONUP:
                 screen.fill((0, 0, 0))
                 screen.blit(background2, (370, 0))
-                #w = threading.Thread(name='worker', target=worker)
                 image = calculateImage(background, screen, lineWidth)
 
             elif event.type == pygame.KEYDOWN:

@@ -10,20 +10,12 @@ from sklearn.neighbors import KNeighborsClassifier
 import scipy.io as sio
 import numpy as np
 
-#clf = svm.SVC(kernel='sigmoid',gamma=0.019, probability=False)
-
 clf = KNeighborsClassifier(n_neighbors=13)
 std_scaler = StandardScaler() 
 
-""" Usando sklean proveer a un clasificador svm.SVC los datos ubicados en los .mat
-    si eso es posible, podemos mezclar la interfaz de pygame con esto quedando re copado
-"""
-
-
-class DesperateGuysClassifier(object):
-    """docstring for DesperateGuysClassifier"""
+class TinyClassifier(object):
     def __init__(self):
-        super(DesperateGuysClassifier, self).__init__()
+        super(TinyClassifier, self).__init__()
         self.expected = None
         self.predicted = None
         self.X = []
@@ -48,7 +40,6 @@ class DesperateGuysClassifier(object):
 
     def getGlobalAccuracy(self, y_test, y_predicted):
         global clf
-        #result = metrics.accuracy_score(y_predicted,y_test) #otro modo
         result = cross_validation.cross_val_score(clf,y_test, y_predicted, cv=5, scoring='accuracy')
         result = result.mean()
         result *= 100.0

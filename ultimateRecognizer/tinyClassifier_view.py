@@ -7,7 +7,8 @@ from pygame.locals import *
 import pygame.font, pygame.event, pygame.draw
 import scipy.io as sio
 import numpy as np 
-from tinyClassifier import TinyClassifier 
+from tinyClassifier import TinyClassifier
+from sklearn import datasets
 screen = None
 classifier = TinyClassifier()
 acc = 0.0
@@ -145,11 +146,10 @@ def checkKeys(myData):
 
 def simulateTraining():
     global Xtrain; global Xtest; global ytrain; global ytest; global classifier; global acc
-    mat_contents = sio.loadmat('newX.mat')
-    Xs = mat_contents['X']
-    mat_contents = sio.loadmat('newy.mat')
-    y = mat_contents['y']
-    ys = y.ravel()
+    # mat_contents = sio.loadmat('newX.mat')
+    # Xs = mat_contents['X']
+    # mat_contents = sio.loadmat('newy.mat')
+    # y = mat_contents['y']
     Xtrain, Xtest, ytrain, ytest = classifier.splitData(Xs,ys)
     classifier.train(Xtrain,ytrain.ravel()) # entrena
     expected = ytest
@@ -242,7 +242,7 @@ def main():
     global screen;
     pygame.init()
     screen = pygame.display.set_mode((730, 450))
-    pygame.display.set_caption("Handwriting recognition")
+    pygame.display.set_caption("Digit recognition")
     
     background = pygame.Surface((360,360))
     background.fill((255, 255, 255))

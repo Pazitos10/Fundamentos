@@ -16,7 +16,9 @@ form = cgi.FieldStorage()
 # Get data from fields
 datos = form.getvalue('matriz_canvas')
 
-img = Image(datos)
+#im = Image.open(StringIO(data))
+
+img = Image.open(datos)
 img = img.getdata()
 img = img.resize((8,8))
 img = map(list, img)

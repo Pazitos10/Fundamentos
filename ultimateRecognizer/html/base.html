@@ -21,9 +21,10 @@
 ================================================== -->
 	<body>
 		<form id="form-cgi" method="post" action="../cgi-bin/procesador_datos.py">
-			<div>
-				<div id="canvas" style="margin-left:500px">Dibujar<br/></div>
-				<p><a class="btn btn-default" href="#" role="button" id="btn-reconocer" style="margin-left:500px">Reconocer &raquo;</a></p>
+			<div style="margin-left:500px">
+				Dibujar<br/>
+				<canvas id="my_canvas" width="200" height="200" style="background-color:#eeeeee"></canvas>
+				<p><a class="btn btn-default" href="#" role="button" id="btn-reconocer">Reconocer &raquo;</a></p>
 				<input type="hidden" name="matriz_canvas" id="matriz_canvas">
 			</div>
 
@@ -41,11 +42,16 @@
 		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 		<script type="text/javascript">
 			$("#btn-reconocer").click(function(event) {
-                this.element=$("canvas")[0];
-				ctx =this.element.getContext("2d");
-				$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
+                var canvas =$("#my_canvas")[0];
+				//ctx =this.element.getContext("2d");
+				$("#matriz_canvas").val(canvas.toDataURL());
 
-				$("#form-cgi").submit()	
+				var image = canvas.toDataURL("image/png");//.replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+				window.location.href=image;
+				
+				//console.log($("#matriz_canvas").val());
+
+				$("#form-cgi").submit()
             
             });
 
@@ -65,9 +71,9 @@
 			        return canvas;
 			    }
 
-			    function init(container, width, height, fillColor) {
-			        var canvas = createCanvas(container, width, height);
-			        var ctx = canvas.context;
+			    function init(context, width, height, fillColor) {
+			        var canvas = $('#my_canvas')[0];//createCanvas(container, width, height);
+			        var ctx = canvas.getContext("2d");
 			        // define a custom fillCircle method
 			        ctx.fillCircle = function(x, y, radius, fillColor) {
 			            this.fillStyle = fillColor;
@@ -83,7 +89,7 @@
 			        ctx.clearTo(fillColor || "#ddd");
 
 			        // bind mouse events
-			        canvas.node.onmousemove = function(e) {
+			        canvas.addEventListener('mousemove', function(e) {
 			            if (!canvas.isDrawing) {
 			               return;
 			            }
@@ -92,17 +98,19 @@
 			            var radius = 4; // or whatever
 			            var fillColor = '#ff0000';
 			            ctx.fillCircle(x, y, radius, fillColor);
-			        };
-			        canvas.node.onmousedown = function(e) {
+			        });
+			        canvas.addEventListener('mousedown', function(e) {
 			            canvas.isDrawing = true;
-			        };
-			        canvas.node.onmouseup = function(e) {
+			        });
+			        
+			        canvas.addEventListener('mouseup', function(e) {
 			            canvas.isDrawing = false;
-			        };
+			        });
 			    }
 
-			    var container = document.getElementById('canvas');
-			    init(container, 200, 200, '#ddd');
+
+
+			    init($('#my_canvas')[0], 200, 200, '#ddd');
 
 			})();
 		</script>

@@ -43,8 +43,13 @@
 			$("#btn-reconocer").click(function(event) {
                 this.element=$("canvas")[0];
 				ctx =this.element.getContext("2d");
-				$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
-
+				//$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
+				datos = ctx.getImageData(0,0,200,200).data
+				var dat = [];
+				for(var i = 0; i < datos.length; i += 1) {
+         			dat.push(datos[i])
+       			}
+       			$("#matriz_canvas").val(dat)
 				$("#form-cgi").submit()	
             
             });

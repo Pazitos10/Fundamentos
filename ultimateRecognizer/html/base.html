@@ -42,16 +42,16 @@
 		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 		<script type="text/javascript">
 			$("#btn-reconocer").click(function(event) {
-                var canvas =$("#my_canvas")[0];
-				//ctx =this.element.getContext("2d");
-				$("#matriz_canvas").val(canvas.toDataURL());
-
-				var image = canvas.toDataURL("image/png");//.replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
-				window.location.href=image;
-				
-				//console.log($("#matriz_canvas").val());
-
-				$("#form-cgi").submit()
+                this.element=$("canvas")[0];
+				ctx =this.element.getContext("2d");
+				//$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
+				datos = ctx.getImageData(0,0,200,200).data
+				var dat = [];
+				for(var i = 0; i < datos.length; i += 1) {
+         			dat.push(datos[i])
+       			}
+       			$("#matriz_canvas").val(dat)
+				$("#form-cgi").submit()	
             
             });
 

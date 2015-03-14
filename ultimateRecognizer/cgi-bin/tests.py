@@ -7,9 +7,10 @@ from tinyClassifier import TinyClassifier
 from sklearn import datasets
 from matplotlib import pyplot as plt
 import os
+from utils import remove_file
 
 def main():
-    clean_results()
+    remove_file('results.txt')
     tiny_clf = TinyClassifier()
     digits = datasets.load_digits()
     n_samples = len(digits.images)
@@ -49,11 +50,6 @@ def plot_confusion_matrix(matrix,acc, title, clf, method=None ):
     #plt.show() 
     plt.clf()
 
-def clean_results():
-    try:
-        os.remove('results.txt')
-    except:
-        pass
 
 if __name__ == '__main__':
     main()

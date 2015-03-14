@@ -1,119 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="">
-		<meta name="author" content="">
-		<!--link rel="icon" href="../../favicon.ico"-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!--link rel="icon" href="../../favicon.ico"-->
 
-		<title>Prueba</title>
+        <title>Prueba</title>
 
-		<!-- Bootstrap core CSS -->
-		<link href="../statics/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap core CSS -->
+        <link href="../statics/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../statics/css/fti-recognizer.css" rel="stylesheet">
 
 
-		<!-- Custom styles for this template -->
-		<!--link href="carousel.css" rel="stylesheet"-->
-	</head>
+        <!-- Custom styles for this template -->
+        <!--link href="carousel.css" rel="stylesheet"-->
+    </head>
 <!-- NAVBAR
 ================================================== -->
-	<body>
-		<form id="form-cgi" method="post" action="../cgi-bin/procesador_datos.py">
-			<div style="margin-left:500px">
-				Dibujar<br/>
-				<canvas id="my_canvas" width="200" height="200" style="background-color:#eeeeee"></canvas>
-				<p><a class="btn btn-default" href="#" role="button" id="btn-reconocer">Reconocer &raquo;</a></p>
-				<input type="hidden" name="matriz_canvas" id="matriz_canvas">
-			</div>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">FTI - Trelew</a>
+            </div>
 
-	
-		</form>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Link</a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Link</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div class="container" style="margin-top:80px">
+            <div class="col-xs-4 col-md-4"></div>
+            <div class="col-xs-4 col-md-4">
+                <form id="form-cgi" class="form-horizontal" method="post" action="../cgi-bin/procesador_datos.py">
+                    <br/>
+                        <div class="form-group">
+                            <div >
+                                <canvas id="my_canvas" width="380" height="380" style="background-color:#dddddd"></canvas>
+                            </div>
+                        </div>
+                        <div class="form-group pull-left">
+                            <a class="btn btn-default" href="#" role="button" id="btn-reconocer"> Reconocer <span class="glyphicon glyphicon-chevron-right"></span></a>
+                        </div>
+                        <div class="form-group pull-right">
+                            <input type="hidden" name="matriz_canvas" id="matriz_canvas">
+                            <a class="btn btn-default" href="#" id="btn-limpiar">Limpiar lienzo</a>
+                        </div>    
+                </form>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            
+
+            $("#btn-limpiar").click(function(){
+                var ctx = getCanvasContext();
+                ctx.clearRect ( 0 , 0 , $('canvas')[0].width, $('canvas')[0].height );
+            });
 
 
-		<!-- Bootstrap core JavaScript
-		================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		<script src="../../dist/js/bootstrap.min.js"></script>
-		<script src="../../assets/js/docs.min.js"></script>
-		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-		<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-		<script type="text/javascript">
-			$("#btn-reconocer").click(function(event) {
-                this.element=$("canvas")[0];
-				ctx =this.element.getContext("2d");
-				//$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
-				datos = ctx.getImageData(0,0,200,200).data
-				var dat = [];
-				for(var i = 0; i < datos.length; i += 1) {
-         			dat.push(datos[i])
-       			}
-       			$("#matriz_canvas").val(dat)
-				$("#form-cgi").submit()	
+            $("#btn-reconocer").click(function(event) {
+                //$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
+                var ctx = getCanvasContext();
+                var datos = ctx.getImageData(0,0,200,200).data
+                var dat = [];
+                for(var i = 0; i < datos.length; i += 1) {
+                    dat.push(datos[i])
+                }
+                datos = $('canvas')[0].toDataURL();
+                
+                $("#matriz_canvas").val(datos);
+                console.log($("#matriz_canvas").val());
+                $("#form-cgi").submit() 
             
             });
 
-			(function() {
-			    // Creates a new canvas element and appends it as a child
-			    // to the parent element, and returns the reference to
-			    // the newly created canvas element
+            (function() {
+                // Creates a new canvas element and appends it as a child
+                // to the parent element, and returns the reference to
+                // the newly created canvas element
+                function getCanvasContext(){
+                    var canvas =$("canvas")[0];
+                    var ctx = canvas.getContext("2d");
+                    return ctx;
+                }
+
+                function createCanvas(parent, width, height) {
+                    var canvas = {};
+                    canvas.node = document.createElement('canvas');
+                    canvas.context = canvas.node.getContext('2d');
+                    canvas.node.width = width || 100;
+                    canvas.node.height = height || 100;
+                    parent.appendChild(canvas.node);
+                    return canvas;
+                }
+
+                function init(context, width, height, fillColor) {
+                    var canvas = $('#my_canvas')[0];//createCanvas(container, width, height);
+                    var ctx = getCanvasContext();
+                    // define a custom fillCircle method
+                    ctx.fillCircle = function(x, y, radius, fillColor) {
+                        this.fillStyle = fillColor;
+                        this.beginPath();
+                        this.moveTo(x, y);
+                        this.arc(x, y, radius, 0, Math.PI * 2, false);
+                        this.fill();
+                    };
+                    ctx.clearTo = function(fillColor) {
+                        ctx.fillStyle = fillColor;
+                        ctx.fillRect(0, 0, width, height);
+                    };
+                    ctx.clearTo(fillColor || "#ddd");
+
+                    // bind mouse events
+                    canvas.addEventListener('mousemove', function(e) {
+                        if (!canvas.isDrawing) {
+                           return;
+                        }
+                        var x = e.pageX - this.offsetLeft;
+                        var y = e.pageY - this.offsetTop;
+                        var radius = 10; // or whatever
+                        var fillColor = '#000000';
+                        ctx.fillCircle(x, y, radius, fillColor);
+                    });
+                    canvas.addEventListener('mousedown', function(e) {
+                        canvas.isDrawing = true;
+                    });
+                    
+                    canvas.addEventListener('mouseup', function(e) {
+                        canvas.isDrawing = false;
+                    });
+                }
 
 
-			    function createCanvas(parent, width, height) {
-			        var canvas = {};
-			        canvas.node = document.createElement('canvas');
-			        canvas.context = canvas.node.getContext('2d');
-			        canvas.node.width = width || 100;
-			        canvas.node.height = height || 100;
-			        parent.appendChild(canvas.node);
-			        return canvas;
-			    }
+                init($('#my_canvas')[0], 380, 380, '#ddd');
 
-			    function init(context, width, height, fillColor) {
-			        var canvas = $('#my_canvas')[0];//createCanvas(container, width, height);
-			        var ctx = canvas.getContext("2d");
-			        // define a custom fillCircle method
-			        ctx.fillCircle = function(x, y, radius, fillColor) {
-			            this.fillStyle = fillColor;
-			            this.beginPath();
-			            this.moveTo(x, y);
-			            this.arc(x, y, radius, 0, Math.PI * 2, false);
-			            this.fill();
-			        };
-			        ctx.clearTo = function(fillColor) {
-			            ctx.fillStyle = fillColor;
-			            ctx.fillRect(0, 0, width, height);
-			        };
-			        ctx.clearTo(fillColor || "#ddd");
-
-			        // bind mouse events
-			        canvas.addEventListener('mousemove', function(e) {
-			            if (!canvas.isDrawing) {
-			               return;
-			            }
-			            var x = e.pageX - this.offsetLeft;
-			            var y = e.pageY - this.offsetTop;
-			            var radius = 4; // or whatever
-			            var fillColor = '#ff0000';
-			            ctx.fillCircle(x, y, radius, fillColor);
-			        });
-			        canvas.addEventListener('mousedown', function(e) {
-			            canvas.isDrawing = true;
-			        });
-			        
-			        canvas.addEventListener('mouseup', function(e) {
-			            canvas.isDrawing = false;
-			        });
-			    }
-
-
-
-			    init($('#my_canvas')[0], 200, 200, '#ddd');
-
-			})();
-		</script>
-	</body>
+            })();
+        </script>
+    </body>
 </html>
 

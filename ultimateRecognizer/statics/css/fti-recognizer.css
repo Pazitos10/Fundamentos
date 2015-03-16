@@ -1,0 +1,14 @@
+.container-canvas {
+    /* This could be done in one single declaration. See the extended sample. */
+    height: 380px;
+    width: 380px;
+    min-width: 380px;
+    min-height: 380px;
+    margin: 0 auto;
+    background-color:#dddddd
+}
+
+.container-main {
+    margin-top: 80px;
+    min-width: 380px;
+}

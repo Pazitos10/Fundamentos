@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Bootstrap + Canvas</title>
+
+        <link rel="stylesheet" href="../statics/css/bootstrap.min.css">
+
+        <style>
+            .container-main {
+                margin-top: 75px;
+            }
+
+            .container-canvas {
+                margin: 0 auto;
+                width: 800px;
+            }
+
+            canvas {
+                border: 1px solid #333;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="#">Project name</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="#">Home</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container container-main">
+            <div class="container-canvas">
+                <canvas id="mycanvas" width="800" height="480">
+                    This is my fallback content.
+                </canvas>
+            </div>
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="../statics/js/bootstrap.min.js"></script>
+        <script>
+            function draw() {
+                var canvas = document.getElementById("mycanvas");
+
+                if (canvas.getContext) {
+                    var ctx = canvas.getContext("2d");
+
+                    ctx.fillStyle = "rgb(200,0,0)";
+                    ctx.fillRect(10, 10, 55, 50);
+
+                    ctx.fillStyle = "rgba(0,0,200,0.5)";
+                    ctx.fillRect(30, 30, 55, 50);
+                } else {
+                    alert("Canvas isn't supported.");
+                }
+            }
+
+            $(function() { 
+                draw();
+            });
+        </script>
+    </body>
+</html>

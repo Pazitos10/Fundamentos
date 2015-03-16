@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!--link rel="icon" href="../../favicon.ico"-->
+
+        <title>Prueba</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="../statics/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../statics/css/fti-recognizer.css" rel="stylesheet">
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        
+
+        <!-- Custom styles for this template -->
+        <!--link href="carousel.css" rel="stylesheet"-->
+    </head>
+<!-- NAVBAR
+================================================== -->
+    <body>
+        <form id="form-cgi" class="form-horizontal" method="post" action="../cgi-bin/procesador_datos.py">
+            <br/>
+            <div class="col-xs-4 col-md-4"></div>
+            <div class="col-xs-4 col-md-4">
+                <div class="form-group">    
+                    <div id="canvas">Click to draw<br/></div>
+                </div>
+            </div>   
+            <div class="col-xs-4 col-md-4"></div>
+        </form>
+
+
+        <script type="text/javascript" src="../statics/js/fti-recognizer.js"></script>
+        <script type="text/javascript">
+            $(document).ready(setup());
+
+            $("#btn-limpiar").click(function(){
+                var ctx = getCanvasContext();
+                ctx.clearRect ( 0 , 0 , $('canvas')[0].width, $('canvas')[0].height );
+            });
+
+            $("#btn-reconocer").click(function(event) {
+                //$("#matriz_canvas").val(ctx.getImageData(0,0,200,200).data);
+                var ctx = getCanvasContext();
+                var datos = ctx.getImageData(0,0,200,200).data
+                var dat = [];
+                for(var i = 0; i < datos.length; i += 1) {
+                    dat.push(datos[i])
+                }
+                datos = $('canvas')[0].toDataURL();
+                
+                $("#matriz_canvas").val(datos);
+                console.log($("#matriz_canvas").val());
+                $("#form-cgi").submit() 
+            
+            });
+
+        </script>
+    </body>
+</html>
+

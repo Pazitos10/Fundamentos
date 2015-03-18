@@ -10,6 +10,8 @@ from sklearn.svm import SVC
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.dummy import DummyClassifier
 import numpy as np
+from utils import remove_file
+
 
 
 
@@ -41,13 +43,14 @@ class TinyClassifier(object):
         return clf.predict(X)
     
     def splitData(self, X, y):
-        return train_test_split(X, y, test_size=0.2)
+        return train_test_split(X, y, test_size=0.5)
 
     def getGlobalAccuracy(self, clf, y_test, y_predicted):
         scores = cross_validation.cross_val_score(clf,y_test, y_predicted, cv=5, scoring='accuracy')
         result = scores.mean()
         std_desv = scores.std()
         result *= 100.0
+        remove_file('results.txt')
         saved_results = open('results.txt', 'a+')
         #print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         line = '\n\n %s \t| Accuracy: %0.2f %% (+/- %0.2f)\n' % (clf.__class__.__name__,result,std_desv)
@@ -57,6 +60,7 @@ class TinyClassifier(object):
         return result
 
     def save_metrics(self,clf, expected, predicted): #salida por archivo
+        remove_file('results.txt')
         results = open('results.txt', 'a+')
         matrix = metrics.confusion_matrix(expected, predicted)
         report = metrics.classification_report(expected, predicted)

@@ -6,12 +6,15 @@ from cStringIO import StringIO
 import cgi, cgitb 
 import urllib
 from utils import remove_file
-from tests import methods,predictions,accuracy,main
+from tests import get_results
+import os
 import Cookie
+import numpy as np
+from pygame import surfarray
 
 
 def main():
-    THUMB_SIZE = 8, 8
+    THUMB_SIZE = (8,8)
     hay_results = 'false'
     form = cgi.FieldStorage() 
     datos = form.getvalue('matriz_canvas')
@@ -20,26 +23,21 @@ def main():
         #obtenemos datos de imagen procesada
         f = StringIO(urllib.urlopen(datos).read())
         img = Image.open(f)
-        img_copy = img 
-        img_copy.thumbnail(THUMB_SIZE, Image.ANTIALIAS)        
-        converted = img_copy.convert('LA') #convertimos a 8 bits - blanco y negro
-        p_img = converted.getdata()
-        p_img = p_img.resize(THUMB_SIZE)
-        p_img = map(list, p_img)
-        p_img = np.array(p_img)
-        s = p_img.shape[0] * p_img.shape[1]
-        p_img_wide = p_img.reshape(1, s)
+        gray = img.convert('L')
+        gray = gray.resize((8,8), Image.LANCZOS)
+        bw = gray.point(lambda x: 0 if x<210 else 255, '1')
+        new_im = np.asarray(bw)
 
-        hay_results = predecir(p_img_wide[0]) # llamamos a predecir respetando formato de los datos
+        hay_results = predecir(new_im.flatten()) # llamamos a predecir respetando formato de los datos
 
         salida(hay_results)
         #VERIFICACIONES
-        #path = '/home/bruno/Dev/FTI/ultimateRecognizer/statics/img/img.png'
-        #path_converted = '../statics/img/8b-thumbnail.png' 
-        #remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
-        #remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
-        #converted.save(path_converted) #para comprobar que se guarda el thumbnail y en 8 bits
-        #img.save(path) # para comprobar que se guarda la imagen en dimensiones originales 380x380
+        path = '../statics/img/img.png'
+        path_converted = '../statics/img/num_bw.png' 
+        remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
+        remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
+        img.save(path)
+        gray.save(path_converted)
 
 def hay_datos():
     cookie_string=os.environ.get('HTTP_COOKIE')
@@ -52,11 +50,14 @@ def hay_datos():
     return result
 
 def predecir(datos):
-    methods,predictions,accuracy = main(predict_data=datos)
+    methods,predictions,accuracy = get_results(datos)
     tabla=''
     for method,pred,acc in zip(methods,predictions,accuracy):
-        tabla+='<td>%s</td><td>%s</td><td>%s</td>' % (method,pred,acc)
-    archivo_resultados = open("../html/resultados_cargados.html","w+")
+        tabla+='<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (method,pred,acc)
+
+    result_path = "../html/resultados_cargados.html"
+    remove_file(result_path)
+    archivo_resultados = open(result_path,"w+")
     archivo_resultados.write((open("../html/tabla_results.html").read()) % (tabla))
     archivo_resultados.close()
     return 'true'

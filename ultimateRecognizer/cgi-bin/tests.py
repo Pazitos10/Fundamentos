@@ -9,48 +9,34 @@ from matplotlib import pyplot as plt
 import os
 from utils import remove_file
 
+methods = [ 'Dummy Classifier',
+            'Support Vector Classifier',
+            'KNeighbors Classifier',
+            'Extra Trees Classifier']
+predictions = []
+accuracy = []
 
-
-def main(predict_data=None):
-    method = [  'Dummy Classifier',
-                'Support Vector Classifier',
-                'KNeighbors Classifier',
-                'Extra Trees Classifier']
-    predictions = []
-    accuracy = []
-    remove_file('results.txt')
-    tiny_clf = TinyClassifier()
-    digits = datasets.load_digits()
-    n_samples = len(digits.images)
-    data = digits.images.reshape((n_samples, -1))
+def get_results(predict_data):
+    tiny_clf, data , digits = init()
     X_train, X_test, y_train, y_test = tiny_clf.splitData(data, digits.target)
     classifiers = get_classifiers(tiny_clf)
     map((lambda clf: tiny_clf.train(clf, X_train, y_train)), classifiers) #entrenan todos con los mismos datos
-    if not predictData:
-        map((lambda clf: predict_and_show_results(  tiny_clf, 
-                                                    clf, 
-                                                    X_test, 
-                                                    y_test, 
-                                                    data, 
-                                                    digits.target)), classifiers)
-    else:
-        map((lambda clf: predict_and_show_results(  tiny_clf, 
-                                                    clf, 
-                                                    predictData, 
-                                                    y_test, 
-                                                    data, 
-                                                    digits.target)), classifiers)
-    #print "Done!. . ."
+    map((lambda clf: predict_and_show_results(  tiny_clf, 
+                                                clf, 
+                                                predict_data, 
+                                                y_test, 
+                                                data, 
+                                                digits.target)), classifiers)
     return methods,predictions,accuracy
 
-def predict_and_show_results(tiny_clf, clf, X_test,expected, data,target):
-    predicted = tiny_clf.predict(clf, X_test)
-    matrix = tiny_clf.save_metrics(clf, expected, predicted)
+def predict_and_show_results(tiny_clf, clf, X,expected, data,target):
+    predicted = tiny_clf.predict(clf, X)
+    #matrix = tiny_clf.save_metrics(clf, expected, predicted)
     acc = tiny_clf.getGlobalAccuracy(clf, data, target)
-    predictions.append(predicted)
+    predictions.append(predicted[0])
     accuracy.append(acc)
     clf_name = clf.__class__.__name__.title()
-    plot_confusion_matrix(matrix, acc, "Confusion matrix", clf_name)
+    #plot_confusion_matrix(matrix, acc, "Confusion matrix", clf_name)
 
 def get_classifiers(tiny_clf):
     dmc = tiny_clf.dummy_clf()
@@ -67,7 +53,29 @@ def plot_confusion_matrix(matrix,acc, title, clf, method=None ):
     plt.ylabel('Predicted value')
     plt.savefig(title+' %s.png' % clf,bbox_inches='tight')
     #plt.show() 
-    plt.clf()
+    plt.clf() 
+
+
+def main():
+    tiny_clf, data , digits = init()
+    X_train, X_test, y_train, y_test = tiny_clf.splitData(data, digits.target)
+    classifiers = get_classifiers(tiny_clf)
+    map((lambda clf: tiny_clf.train(clf, X_train, y_train)), classifiers) #entrenan todos con los mismos datos   
+    map((lambda clf: predict_and_show_results(  tiny_clf, 
+                                                    clf, 
+                                                    X_test, 
+                                                    y_test, 
+                                                    data, 
+                                                    digits.target)), classifiers)
+    print "Done!. . ."
+
+def init():
+    remove_file('results.txt')
+    tiny_clf = TinyClassifier()
+    digits = datasets.load_digits()
+    n_samples = len(digits.images)
+    data = digits.images.reshape((n_samples, -1))
+    return tiny_clf, data , digits
 
 
 if __name__ == '__main__':

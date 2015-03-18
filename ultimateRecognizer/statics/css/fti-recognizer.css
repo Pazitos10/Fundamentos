@@ -1,14 +1,24 @@
 .container-canvas {
-    /* This could be done in one single declaration. See the extended sample. */
     height: 380px;
     width: 380px;
     min-width: 380px;
     min-height: 380px;
     margin: 0 auto;
-    background-color:#dddddd
+    background-color: #fefefe;
+    -webkit-box-shadow: 0px 3px 0px rgba(0, 0, 0, 0);
+    -moz-box-shadow:    0px 3px 0px rgba(0, 0, 0, 0);
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
 }
 
 .container-main {
     margin-top: 80px;
     min-width: 380px;
+}
+
+
+.img-rounded {
+    margin-left:45%;
+    -webkit-box-shadow: 0px 3px 0px rgba(0, 0, 0, 0);
+    -moz-box-shadow:    0px 3px 0px rgba(0, 0, 0, 0);
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
 }

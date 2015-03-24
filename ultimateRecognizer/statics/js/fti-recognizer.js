@@ -46,7 +46,8 @@ function setup() {
             this.fillStyle = fillColor;
             this.beginPath();
             this.moveTo(x, y);
-            this.arc(x, y, radius, 0, Math.PI * 2, false);
+            //this.arc(x, y, radius, 0, Math.PI * 2, false);
+            this.rect(x-15, y-15, radius, radius);
             this.fill();
             $.cookie("hay_datos", 'True', { expires: null, path: '/'}); 
         };
@@ -55,6 +56,7 @@ function setup() {
             ctx.fillRect(0, 0, width, height);
         };
         ctx.clearTo(fillColor || "#fefefe");
+        //ctx.clearTo(fillColor || "#dddddd");
 
         // bind mouse events
         canvas.node.onmousemove = function(e) {
@@ -63,8 +65,9 @@ function setup() {
             }
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
-            var radius = 8;
-            var fillColor = '#0c84e4';
+            var radius = 25;
+            //var fillColor = '#0c84e4';
+            var fillColor = '#000000';
             ctx.fillCircle(x, y, radius, fillColor);
         };
         canvas.node.onmousedown = function(e) {
@@ -78,6 +81,7 @@ function setup() {
     
     var container = document.getElementById('canvas');
     init(container, 380, 380, '#fefefe');
+    //init(container, 380, 380, '#dddddd');
     checkResults();
 
     $("#btn-limpiar").bind("click",function(){
@@ -85,19 +89,20 @@ function setup() {
         $("#tabla-results").hide();
         $("#thumb-dibujado").hide();
         var ctx = $('canvas')[0].getContext("2d");
-        ctx.clearRect ( 0 , 0 , $('canvas')[0].width, $('canvas')[0].height );
+        ctx.clearTo("#fefefe");
+        //ctx.clearRect ( 0 , 0 , $('canvas')[0].width, $('canvas')[0].height );
     });
 
     $("#btn-reconocer").bind("click",function(event) {
         var ctx = $('canvas')[0].getContext("2d");
         var datos = ctx.getImageData(0,0,380,380).data
         var dat = [];
-        for(var i = 0; i < datos.length; i += 1) {
-            dat.push(datos[i])
-        }
+        // for(var i = 0; i < datos.length; i += 1) {
+        //     dat.push(datos[i])
+        // }
         datos = $('canvas')[0].toDataURL();
         $("#matriz_canvas").val(datos);
-        console.log($("#matriz_canvas").val());
+        //console.log($("#matriz_canvas").val());
         $("#form-cgi").submit();
     });
 

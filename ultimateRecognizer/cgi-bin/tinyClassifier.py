@@ -13,12 +13,9 @@ import numpy as np
 from utils import remove_file
 
 
-
-
-
 class TinyClassifier(object):
     def __init__(self):
-        super(TinyClassifier, self).__init__() 
+        super(TinyClassifier, self).__init__()
 
     def extra_trees_clf(self):
         #Defaults => n_estimators=4, criterion='gini',max_features=0.2,n_jobs=4,random_state=1
@@ -26,9 +23,9 @@ class TinyClassifier(object):
                                     n_jobs=-1,
                                     random_state=1)
 
-    def dummy_clf(self): 
+    def dummy_clf(self):
         return DummyClassifier(strategy='most_frequent',random_state=np.random.randint(0,9))
-          
+
     def support_vector_clf(self):
         #default kernel= 'linear'
         return SVC(kernel='poly')
@@ -38,10 +35,10 @@ class TinyClassifier(object):
 
     def train(self, clf, X, y): #entrenar
         clf.fit(X,y)
-    
-    def predict(self, clf, X): #predecir/probar/testear 
+
+    def predict(self, clf, X): #predecir/probar/testear
         return clf.predict(X)
-    
+
     def splitData(self, X, y):
         return train_test_split(X, y, test_size=0.5)
 
@@ -58,6 +55,9 @@ class TinyClassifier(object):
         saved_results.write(line)
         saved_results.close()
         return result
+
+
+
 
     def save_metrics(self,clf, expected, predicted): #salida por archivo
         remove_file('results.txt')

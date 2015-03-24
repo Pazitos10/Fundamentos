@@ -21,23 +21,30 @@ def main():
 
     if hay_datos():
         #obtenemos datos de imagen procesada
+        path = '../statics/img/img.png'
+        path_converted = '../statics/img/grey.png'
+        path_bw = '../statics/img/bw.png'
+        path_bw_s = '../statics/img/bw_s.png'
+
+        remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
+        remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
+        remove_file(path_bw)
+        remove_file(path_bw_s)
+
         f = StringIO(urllib.urlopen(datos).read())
         img = Image.open(f)
+        img.save(path)
         gray = img.convert('L')
-        gray = gray.resize((8,8), Image.LANCZOS)
-        bw = gray.point(lambda x: 0 if x<210 else 255, '1')
-        new_im = np.asarray(bw)
+        gray.save(path_converted)
+        bw = gray.point(lambda x: 255 if x<50 else 0, '1')
+        bw.save(path_bw)
+        bw_s = bw.resize((8,8), Image.LANCZOS)
+        bw_s.save(path_bw_s)
+        new_im = np.asarray(bw_s, dtype=float)
 
         hay_results = predecir(new_im.flatten()) # llamamos a predecir respetando formato de los datos
 
         salida(hay_results)
-        #VERIFICACIONES
-        path = '../statics/img/img.png'
-        path_converted = '../statics/img/num_bw.png' 
-        remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
-        remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
-        img.save(path)
-        gray.save(path_converted)
 
 def hay_datos():
     cookie_string=os.environ.get('HTTP_COOKIE')

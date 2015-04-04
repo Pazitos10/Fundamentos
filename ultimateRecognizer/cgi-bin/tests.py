@@ -15,22 +15,33 @@ methods = [ 'Dummy Classifier',
             'Extra Trees Classifier']
 predictions = []
 accuracy = []
+proba = []
 
 def get_results(predict_data):
     tiny_clf, data , digits = init()
     X_train, X_test, y_train, y_test = tiny_clf.splitData(data, digits.target)
     classifiers = get_classifiers(tiny_clf)
     map((lambda clf: tiny_clf.train(clf, X_train, y_train)), classifiers) #entrenan todos con los mismos datos
-    map((lambda clf: predict_and_show_results(  tiny_clf, 
-                                                clf, 
-                                                predict_data, 
-                                                y_test, 
-                                                data, 
-                                                digits.target)), classifiers)
-    return methods,predictions,accuracy
+    map((lambda clf: just_predict(tiny_clf,clf,predict_data)), classifiers)
 
+    import json
+    remove_file("res.txt")
+    f = open("res.txt","w")
+    f.write(json.dumps(proba))
+    f.close()
+    
+    return methods,predictions,proba
+
+def just_predict(tiny_clf,clf,data):
+    predicted, probs = tiny_clf.predict(clf, data)
+    predictions.append(predicted)
+    clf_name = clf.__class__.__name__.title()
+    proba.append(probs)
+
+
+    
 def predict_and_show_results(tiny_clf, clf, X,expected, data,target):
-    predicted = tiny_clf.predict(clf, X)
+    predicted, probs = tiny_clf.predict(clf, X)
     #matrix = tiny_clf.save_metrics(clf, expected, predicted)
     acc = tiny_clf.getGlobalAccuracy(clf, data, target)
     predictions.append(predicted[0])

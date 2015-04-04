@@ -5,25 +5,16 @@ function setup() {
     function checkResults(){
         var hay_results = $.cookie('hay_results');
         if(Boolean(hay_results)){
-            //cargarImagen();
             cargarTablaResults();
         }
         else
             remove_cookies();
     }
 
-    function remove_cookies () {
-        //$.removeCookie("hay_results",{ expires: null, path: '/'});
-        //$.removeCookie("hay_datos", { expires: null, path: '/'}); 
-        var cookies = $.cookie();
-        for(var cookie in cookies) {
-           $.removeCookie(cookie);
-        }
-    }
-
     function cargarTablaResults () {
-        $( "#tabla-results" ).load( "resultados_cargados.html" );
-        $("#tabla-results").show();
+        //$( "#tabla-results" ).load( "resultados_cargados.html" );
+        //$("#tabla-results").show();
+        $("#page-content").load("resultados_cargados.html");
     }
 
     function createCanvas(parent, width, height) {
@@ -40,7 +31,7 @@ function setup() {
     function init(container, width, height, fillColor) {
         var canvas = createCanvas(container, width, height);
         var ctx = canvas.context;
-        $.cookie("hay_datos", 'False', { expires: null, path: '/'}); 
+        $.cookie("hay_datos", 'False', { expires: null, path: '/'});
         // define a custom fillCircle method
         ctx.fillCircle = function(x, y, radius, fillColor) {
             this.fillStyle = fillColor;
@@ -84,27 +75,40 @@ function setup() {
     //init(container, 380, 380, '#dddddd');
     checkResults();
 
-    $("#btn-limpiar").bind("click",function(){
-        remove_cookies();
-        $("#tabla-results").hide();
-        $("#thumb-dibujado").hide();
-        var ctx = $('canvas')[0].getContext("2d");
-        ctx.clearTo("#fefefe");
-        //ctx.clearRect ( 0 , 0 , $('canvas')[0].width, $('canvas')[0].height );
-    });
+    $("#btn-limpiar").bind("click",limpiarCanvas());
 
     $("#btn-reconocer").bind("click",function(event) {
-        var ctx = $('canvas')[0].getContext("2d");
-        var datos = ctx.getImageData(0,0,380,380).data
-        var dat = [];
+        //var ctx = $('canvas')[0].getContext("2d");
+        //var datos = ctx.getImageData(0,0,380,380).data
+        //var dat = [];
         // for(var i = 0; i < datos.length; i += 1) {
         //     dat.push(datos[i])
         // }
-        datos = $('canvas')[0].toDataURL();
+        var datos = $('canvas')[0].toDataURL();
         $("#matriz_canvas").val(datos);
         //console.log($("#matriz_canvas").val());
         $("#form-cgi").submit();
     });
+};
+
+function limpiarCanvas(){
+    remove_cookies();
+    $("#tabla-results").hide();
+    var ctx = $('canvas')[0].getContext("2d");
+    ctx.clearTo("#fefefe");
+    
+};
 
 
-}
+function remove_cookies() {
+    var cookies = $.cookie();
+    for(var cookie in cookies) {
+       $.removeCookie(cookie);
+    }
+};
+
+
+function atras(){
+    $.cookie('hay_results','',{path:'/', expires:null});
+    location.reload();
+};

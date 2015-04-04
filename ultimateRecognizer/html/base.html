@@ -16,6 +16,10 @@
 
         <!-- Custom styles for this template -->
         <!--link href="carousel.css" rel="stylesheet"-->
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="../statics/js/jquery.cookie.js"></script>
+        <script src="../statics/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="../statics/js/fti-recognizer.js"></script>
     </head>
 <!-- NAVBAR
 ================================================== -->
@@ -29,10 +33,10 @@
         </nav>
 
         <div class="content">
-            <div class="container container-main">
-                <div class="col-md-4 pull-left" id="tabla-results">
-                    <!-- TABLA DE RESULTADOS  -->
-                </div>
+            <div class="container container-main" id="page-content">
+                <!-- <div class="col-md-4 pull-left" id="tabla-results">
+                    < TABLA DE RESULTADOS >
+                </div> -->
                 <div class="container-canvas">
                     <div id="canvas" width="380" height="380"></div>
                 </div>
@@ -54,11 +58,6 @@
                 </div>
             </div>
         </div>
-
-        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script src="../statics/js/jquery.cookie.js"></script>
-        <script src="../statics/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="../statics/js/fti-recognizer.js"></script>
         <script type="text/javascript">
             $(document).ready(setup());
         </script>

@@ -28,19 +28,21 @@ class TinyClassifier(object):
 
     def support_vector_clf(self):
         #default kernel= 'linear'
-        return SVC(kernel='poly')
+        return SVC(gamma=0.001, probability=True)
 
     def k_neighbors_clf(self):
-        return KNeighborsClassifier(n_neighbors=9, weights='distance')
+        return KNeighborsClassifier(n_neighbors=9, algorithm='auto')
 
     def train(self, clf, X, y): #entrenar
         clf.fit(X,y)
 
-    def predict(self, clf, X): #predecir/probar/testear
-        return clf.predict(X)
+    def predict(self, clf, X): #predecir
+        predicted = clf.predict(X)[0]
+        probs = {i : (float("{0:.2f}".format(prob*100))) for i, prob in enumerate(clf.predict_proba(X)[0])}
+        return predicted, probs
 
     def splitData(self, X, y):
-        return train_test_split(X, y, test_size=0.5)
+        return train_test_split(X, y, test_size=0.1)
 
     def getGlobalAccuracy(self, clf, y_test, y_predicted):
         scores = cross_validation.cross_val_score(clf,y_test, y_predicted, cv=5, scoring='accuracy')

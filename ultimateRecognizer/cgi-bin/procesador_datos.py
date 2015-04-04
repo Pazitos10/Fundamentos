@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #Authors: pazitos10, SinX
-from PIL import Image
+from PIL import Image, ImageOps
 from cStringIO import StringIO
 import cgi, cgitb 
 import urllib
@@ -10,7 +10,6 @@ from tests import get_results
 import os
 import Cookie
 import numpy as np
-from pygame import surfarray
 
 
 def main():
@@ -19,6 +18,7 @@ def main():
     form = cgi.FieldStorage() 
     datos = form.getvalue('matriz_canvas')
 
+    
     if hay_datos():
         #obtenemos datos de imagen procesada
         path = '../statics/img/img.png'
@@ -36,15 +36,17 @@ def main():
         img.save(path)
         gray = img.convert('L')
         gray.save(path_converted)
-        bw = gray.point(lambda x: 255 if x<50 else 0, '1')
-        bw.save(path_bw)
-        bw_s = bw.resize((8,8), Image.LANCZOS)
-        bw_s.save(path_bw_s)
-        new_im = np.asarray(bw_s, dtype=float)
+        gray.thumbnail((8,8), Image.LANCZOS)
+        gray.save(path_bw_s)
+        im_a = np.asarray(gray, dtype=float)
+        im_a = map((lambda x: (x//16)+1 ), im_a)
+        new_im = np.asarray(im_a)
 
         hay_results = predecir(new_im.flatten()) # llamamos a predecir respetando formato de los datos
 
         salida(hay_results)
+
+
 
 def hay_datos():
     cookie_string=os.environ.get('HTTP_COOKIE')
@@ -57,15 +59,34 @@ def hay_datos():
     return result
 
 def predecir(datos):
-    methods,predictions,accuracy = get_results(datos)
-    tabla=''
-    for method,pred,acc in zip(methods,predictions,accuracy):
-        tabla+='<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (method,pred,acc)
+    import operator
+    methods,predictions,probs = get_results(datos)
+    tabla1=''
+    tabla2=''
+    proba = [v for v in probs]
+
+    for method,pred in zip(methods,predictions):
+        tabla1+='<tr><td>%s</td><td>%s</td></tr>' % (method,pred)
+
+    tabla2+='<tr>'
+    for method in methods:
+        tabla2+='<td><strong> %s %% </strong></td>' % method
+    tabla2+='</tr>'
+
+    for value in proba:
+        tabla2 +='<td>'
+        max_val = max(value, key=value.get)
+        for label, prob in value.iteritems():
+            if label == max_val:
+                tabla2+='<strong style="color:green">%s: %s </strong><br>'  % (label, prob)
+            else:
+                tabla2+='%s: %s <br>'  % (label, prob)
+        tabla2 +='</td>'
 
     result_path = "../html/resultados_cargados.html"
     remove_file(result_path)
     archivo_resultados = open(result_path,"w+")
-    archivo_resultados.write((open("../html/tabla_results.html").read()) % (tabla))
+    archivo_resultados.write((open("../html/resultados.html").read()) % (tabla1,tabla2))
     archivo_resultados.close()
     return 'true'
     

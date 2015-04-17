@@ -10,10 +10,16 @@ from tests import get_results
 import os
 import Cookie
 import numpy as np
-from sklearn.datasets import load_digits
+
+path = '../statics/img/img.png'
+path_converted = '../statics/img/grey.png'
+path_bw = '../statics/img/bw.png'
+path_bw_s = '../statics/img/bw_s.png'
 
 
 def main():
+    global path
+
     THUMB_SIZE = (8,8)
     hay_results = 'false'
     form = cgi.FieldStorage() 
@@ -21,30 +27,35 @@ def main():
 
     
     if hay_datos():
-        # path = '../statics/img/img.png'
-        # path_converted = '../statics/img/grey.png'
-        # path_bw = '../statics/img/bw.png'
-        # path_bw_s = '../statics/img/bw_s.png'
-        # remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
-        # remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
-        # remove_file(path_bw)
-        # remove_file(path_bw_s)
-        # f = StringIO(urllib.urlopen(datos).read())
-        # img = Image.open(f)
-        # img.save(path)
-        # gray = img.convert('L')
-        # gray.save(path_converted)
-        # gray.thumbnail((8,8), Image.LANCZOS)
-        # gray.save(path_bw_s)
-        # im_a = np.asarray(gray, dtype=float)
-        # im_a = map((lambda x: (x//16)+1 ), im_a)
-        # new_im = np.asarray(im_a)
-        # hay_results = predecir(new_im.flatten()) # llamamos a predecir respetando formato de los datos
-        # salida(hay_results)
-        d = load_digits()
-        hay_results = predecir(d.images[8].flatten()) # llamamos a predecir respetando formato de los datos
+        if bool(datos):
+            remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
+            #remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
+            #remove_file(path_bw)
+            #remove_file(path_bw_s)
+            f = StringIO(urllib.urlopen(datos).read())
+            im_a = acciones_comunes(f, guardar=True)
+        else:
+            f = path
+            im_a = acciones_comunes(f, guardar=False)
+
+#        im_a = map((lambda x: (x//16)+1 ), im_a)
+        #new_im = np.asarray(im_a)
+
+        hay_results = predecir(im_a.flatten()) # llamamos a predecir respetando formato de los datos
+
+
         salida(hay_results)
 
+def acciones_comunes(f, guardar=False):
+    global path
+    img = Image.open(f)
+    if guardar:
+        img.save(path)
+    gray = img.convert('L')
+    gray.thumbnail((8,8), Image.LANCZOS)
+    gray = ImageOps.invert(gray)
+    im_a = np.array(gray)
+    return im_a
 
 
 def hay_datos():

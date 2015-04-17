@@ -19,8 +19,15 @@
             %s
         </table>
     </div>
-    <a class="btn btn-success" id="btn-atras" href="#" onclick="atras()">
-        <span class="glyphicon glyphicon-chevron-left"></span> 
-        Atrás
-    </a>
+    <div class="buttons">
+        <a class="btn btn-success" id="btn-atras" href="#" onclick="atras()">
+            <span class="glyphicon glyphicon-chevron-left"></span> 
+            Atrás
+        </a>
+        <a class="btn btn-primary pull-right" href="#" role="button" id="btn-reintentar" onclick="reconocer(String($('#thumb-dibujado')[0].src))"> Reintentar <span class="glyphicon glyphicon-repeat"></span></a>
+    </div>
+    <form id="form-cgi" method="post" action="../cgi-bin/procesador_datos.py">
+        <input type="hidden" name="path_imagen" id="matriz_canvas">
+        <input type="hidden" name="matriz_canvas" id="matriz_canvas_2" value="">
+    </form>
 </div>

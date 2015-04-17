@@ -21,8 +21,8 @@ function setup() {
         var canvas = {};
         canvas.node = document.createElement('canvas');
         canvas.context = canvas.node.getContext('2d');
-        canvas.node.width = width || 380;
-        canvas.node.height = height || 380;
+        canvas.node.width = width || 450;
+        canvas.node.height = height || 450;
         canvas.node.id = "real-canvas"
         parent.appendChild(canvas.node);
         return canvas;
@@ -56,9 +56,9 @@ function setup() {
             }
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
-            var radius = 25;
+            var radius = 55;
             //var fillColor = '#0c84e4';
-            var fillColor = '#000000';
+            var fillColor = '#006548';
             ctx.fillCircle(x, y, radius, fillColor);
         };
         canvas.node.onmousedown = function(e) {
@@ -71,25 +71,17 @@ function setup() {
 
     
     var container = document.getElementById('canvas');
-    init(container, 380, 380, '#fefefe');
-    //init(container, 380, 380, '#dddddd');
+    init(container, 450, 450, '#fefefe');
     checkResults();
-
-    $("#btn-limpiar").bind("click",limpiarCanvas());
-
-    $("#btn-reconocer").bind("click",function(event) {
-        //var ctx = $('canvas')[0].getContext("2d");
-        //var datos = ctx.getImageData(0,0,380,380).data
-        //var dat = [];
-        // for(var i = 0; i < datos.length; i += 1) {
-        //     dat.push(datos[i])
-        // }
-        var datos = $('canvas')[0].toDataURL();
-        $("#matriz_canvas").val(datos);
-        //console.log($("#matriz_canvas").val());
-        $("#form-cgi").submit();
-    });
 };
+
+
+function reconocer(imagen) {
+    var datos = imagen;
+    $("#matriz_canvas").val(datos);
+    $("#form-cgi").submit();
+};
+
 
 function limpiarCanvas(){
     remove_cookies();

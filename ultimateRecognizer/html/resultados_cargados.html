@@ -10,17 +10,24 @@
             <td><strong>Predicción</strong></td>
         </tr>
         
-        <tr><td>Dummy Classifier</td><td>5</td></tr><tr><td>Support Vector Classifier</td><td>8</td></tr><tr><td>KNeighbors Classifier</td><td>8</td></tr><tr><td>Extra Trees Classifier</td><td>8</td></tr>
+        <tr><td>Dummy Classifier</td><td>5</td></tr><tr><td>Support Vector Classifier</td><td>1</td></tr><tr><td>KNeighbors Classifier</td><td>1</td></tr><tr><td>Extra Trees Classifier</td><td>9</td></tr>
         
     </table>
     </div>
     <div class="col-md-6">
         <table class="table">
-            <tr><td><strong> Dummy Classifier % </strong></td><td><strong> Support Vector Classifier % </strong></td><td><strong> KNeighbors Classifier % </strong></td><td><strong> Extra Trees Classifier % </strong></td></tr><td>0: 0.0 <br>1: 0.0 <br>2: 0.0 <br>3: 0.0 <br>4: 0.0 <br><strong style="color:green">5: 100.0 </strong><br>6: 0.0 <br>7: 0.0 <br>8: 0.0 <br>9: 0.0 <br></td><td>0: 0.12 <br>1: 0.05 <br>2: 0.15 <br>3: 0.24 <br>4: 0.05 <br>5: 0.06 <br>6: 0.15 <br>7: 0.06 <br><strong style="color:green">8: 98.76 </strong><br>9: 0.36 <br></td><td>0: 0.0 <br>1: 0.0 <br>2: 0.0 <br>3: 0.0 <br>4: 0.0 <br>5: 0.0 <br>6: 0.0 <br>7: 0.0 <br><strong style="color:green">8: 100.0 </strong><br>9: 0.0 <br></td><td>0: 0.0 <br>1: 10.0 <br>2: 0.0 <br>3: 10.0 <br>4: 0.0 <br>5: 0.0 <br>6: 0.0 <br>7: 0.0 <br><strong style="color:green">8: 60.0 </strong><br>9: 20.0 <br></td>
+            <tr><td><strong> Dummy Classifier % </strong></td><td><strong> Support Vector Classifier % </strong></td><td><strong> KNeighbors Classifier % </strong></td><td><strong> Extra Trees Classifier % </strong></td></tr><td>0: 0.0 <br>1: 0.0 <br>2: 0.0 <br>3: 0.0 <br>4: 0.0 <br><strong style="color:green">5: 100.0 </strong><br>6: 0.0 <br>7: 0.0 <br>8: 0.0 <br>9: 0.0 <br></td><td>0: 2.06 <br><strong style="color:green">1: 18.39 </strong><br>2: 10.53 <br>3: 7.14 <br>4: 14.57 <br>5: 11.49 <br>6: 3.6 <br>7: 10.02 <br>8: 9.05 <br>9: 13.15 <br></td><td>0: 0.0 <br><strong style="color:green">1: 100.0 </strong><br>2: 0.0 <br>3: 0.0 <br>4: 0.0 <br>5: 0.0 <br>6: 0.0 <br>7: 0.0 <br>8: 0.0 <br>9: 0.0 <br></td><td>0: 10.0 <br>1: 20.0 <br>2: 0.0 <br>3: 0.0 <br>4: 0.0 <br>5: 10.0 <br>6: 0.0 <br>7: 0.0 <br>8: 20.0 <br><strong style="color:green">9: 40.0 </strong><br></td>
         </table>
     </div>
-    <a class="btn btn-success" id="btn-atras" href="#" onclick="atras()">
-        <span class="glyphicon glyphicon-chevron-left"></span> 
-        Atrás
-    </a>
+    <div class="buttons">
+        <a class="btn btn-success" id="btn-atras" href="#" onclick="atras()">
+            <span class="glyphicon glyphicon-chevron-left"></span> 
+            Atrás
+        </a>
+        <a class="btn btn-primary pull-right" href="#" role="button" id="btn-reintentar" onclick="reconocer(String($('#thumb-dibujado')[0].src))"> Reintentar <span class="glyphicon glyphicon-repeat"></span></a>
+    </div>
+    <form id="form-cgi" method="post" action="../cgi-bin/procesador_datos.py">
+        <input type="hidden" name="path_imagen" id="matriz_canvas">
+        <input type="hidden" name="matriz_canvas" id="matriz_canvas_2" value="">
+    </form>
 </div>

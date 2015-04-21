@@ -46,7 +46,7 @@ function setup() {
             ctx.fillStyle = fillColor;
             ctx.fillRect(0, 0, width, height);
         };
-        ctx.clearTo(fillColor || "#fefefe");
+        ctx.clearTo(fillColor || "#ffffff");
         //ctx.clearTo(fillColor || "#dddddd");
 
         // bind mouse events
@@ -56,9 +56,9 @@ function setup() {
             }
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
-            var radius = 55;
+            var radius = 60;
             //var fillColor = '#0c84e4';
-            var fillColor = '#006548';
+            var fillColor = '#000000';
             ctx.fillCircle(x, y, radius, fillColor);
         };
         canvas.node.onmousedown = function(e) {
@@ -71,7 +71,7 @@ function setup() {
 
     
     var container = document.getElementById('canvas');
-    init(container, 450, 450, '#fefefe');
+    init(container, 450, 450, '#ffffff');
     checkResults();
 };
 
@@ -87,7 +87,7 @@ function limpiarCanvas(){
     remove_cookies();
     $("#tabla-results").hide();
     var ctx = $('canvas')[0].getContext("2d");
-    ctx.clearTo("#fefefe");
+    ctx.clearTo("#ffffff");
     
 };
 

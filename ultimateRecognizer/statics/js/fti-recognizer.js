@@ -1,7 +1,4 @@
 function setup() {
-    // Creates a new canvas element and appends it as a child
-    // to the parent element, and returns the reference to
-    // the newly created canvas element
     function checkResults(){
         var hay_results = $.cookie('hay_results');
         if(Boolean(hay_results)){
@@ -12,8 +9,6 @@ function setup() {
     }
 
     function cargarTablaResults () {
-        //$( "#tabla-results" ).load( "resultados_cargados.html" );
-        //$("#tabla-results").show();
         $("#page-content").load("resultados_cargados.html");
     }
 
@@ -32,12 +27,10 @@ function setup() {
         var canvas = createCanvas(container, width, height);
         var ctx = canvas.context;
         $.cookie("hay_datos", 'False', { expires: null, path: '/'});
-        // define a custom fillCircle method
         ctx.fillCircle = function(x, y, radius, fillColor) {
             this.fillStyle = fillColor;
             this.beginPath();
             this.moveTo(x, y);
-            //this.arc(x, y, radius, 0, Math.PI * 2, false);
             this.rect(x-15, y-15, radius, radius);
             this.fill();
             $.cookie("hay_datos", 'True', { expires: null, path: '/'}); 
@@ -47,7 +40,6 @@ function setup() {
             ctx.fillRect(0, 0, width, height);
         };
         ctx.clearTo(fillColor || "#ffffff");
-        //ctx.clearTo(fillColor || "#dddddd");
 
         // bind mouse events
         canvas.node.onmousemove = function(e) {
@@ -57,7 +49,6 @@ function setup() {
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
             var radius = 60;
-            //var fillColor = '#0c84e4';
             var fillColor = '#000000';
             ctx.fillCircle(x, y, radius, fillColor);
         };

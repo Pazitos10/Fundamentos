@@ -3,13 +3,10 @@
 #Authors: pazitos10, SinX
 from PIL import Image, ImageOps
 from cStringIO import StringIO
-import cgi, cgitb 
-import urllib
+import cgi, cgitb, urllib, os, Cookie 
+import numpy as np
 from utils import remove_file
 from tests import get_results
-import os
-import Cookie
-import numpy as np
 
 path = '../statics/img/img.png'
 path_converted = '../statics/img/grey.png'
@@ -19,32 +16,19 @@ path_bw_s = '../statics/img/bw_s.png'
 
 def main():
     global path
-
-    THUMB_SIZE = (8,8)
     hay_results = 'false'
     form = cgi.FieldStorage() 
     datos = form.getvalue('matriz_canvas')
-
-    
-    if hay_datos():
+    if hay_datos(): #Consulta cookie
         remove_file(path_bw_s)
-        remove_file(path_bw)
-        if bool(datos):
-            remove_file(path) #habilitar esta linea si se hacen las comprobaciones siguientes
-            #remove_file(path_converted) #habilitar esta linea si se hacen las comprobaciones siguientes
-            #remove_file(path_bw)
+        if bool(datos): #Consulta string de datos de html
+            remove_file(path) 
             f = StringIO(urllib.urlopen(datos).read())
             im_a = acciones_comunes(f, guardar=True)
         else:
             f = path
             im_a = acciones_comunes(f, guardar=False)
-
-#        im_a = map((lambda x: (x//16)+1 ), im_a)
-        #new_im = np.asarray(im_a)
-
-        hay_results = predecir(im_a.flatten()) # llamamos a predecir respetando formato de los datos
-
-
+        hay_results = predecir(im_a.flatten())
         salida(hay_results)
 
 def acciones_comunes(f, guardar=False):
@@ -56,7 +40,6 @@ def acciones_comunes(f, guardar=False):
     gray.thumbnail((8,8), Image.LANCZOS)
     gray.save(path_bw_s)
     gray = ImageOps.invert(gray)
-    gray.save(path_bw)
     im_a = np.array(gray)
     return im_a
 
@@ -65,7 +48,7 @@ def hay_datos():
     cookie_string=os.environ.get('HTTP_COOKIE')
     c=Cookie.SimpleCookie()
     c.load(cookie_string)
-    if c['hay_datos']: #el valor de la cookie no es relevante, solo importa la existencia
+    if c['hay_datos']: #el valor no es relevante, solo importa la existencia
         result = True
     else:
         result = False

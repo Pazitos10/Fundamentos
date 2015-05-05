@@ -1,4 +1,6 @@
-###<p text-align="center">Universidad Nacional de la Patagonia San Juan Bosco - Facultad de Ingeniería - Fundamentos Teóricos de la Informática - Trabajo Final - Machine learning: Algoritmos de Clasificación para reconocimiento de dígitos</p>
+	Universidad Nacional de la Patagonia San Juan Bosco - Facultad de Ingeniería - 
+	Fundamentos Teóricos de la Informática - Trabajo Final
+	Machine learning: Algoritmos de Clasificación para reconocimiento de dígitos
 
 #####Introducción
 Para el presente trabajo se propone la realización de una aplicación que permita al usuario dibujar un número (entre 0 y 9) y la aplicación determine de qué dígito se trata a través de la utilización de algoritmos de clasificación.
@@ -24,8 +26,8 @@ El trabajo es presentado en forma de aplicación web, montado sobre un servidor 
 ######Configuración del servidor:
 El servidor elegido fue apache en su versión 2.4.7 y fue instalado sobre un Ubuntu 14.04 con el comando: sudo apt-get install apache2  y requiere una configuración mínima, que consiste en:     
 - Agregar el directorio para el proyecto en el archivo /etc/apache2/apache.conf
-- Habilitar la ejecución de dichos scripts al editar el archivo /etc/apache2/conf-available/serve-cgi-bin.conf 
-  La ubicación del archivo puede variar según la versión/plataforma en la cual se instale apache.
+- Habilitar la ejecución de dichos scripts al editar el archivo /etc/apache2/conf-available/serve-cgi-bin.conf. 
+  (La ubicación del archivo puede variar según la versión/plataforma en la cual se instale apache)
 
 Donde es necesario otorgar un path en el cual corran los archivos de python con la directiva ScriptAlias /cgi-bin/ <path_residencia_scripts>
 Luego debe indicarse el directorio con el mismo path de residencia de los scripts y dentro de esa sección deben completarse las directivas Options y AddHandler.

@@ -1,6 +1,6 @@
-	Universidad Nacional de la Patagonia San Juan Bosco - Facultad de Ingeniería - 
-	Fundamentos Teóricos de la Informática - Trabajo Final
-	Machine learning: Algoritmos de Clasificación para reconocimiento de dígitos
+###Universidad Nacional de la Patagonia San Juan Bosco - Facultad de Ingeniería
+####Fundamentos Teóricos de la Informática - Trabajo Final
+####Machine learning: Algoritmos de Clasificación para reconocimiento de dígitos
 
 #####Introducción
 Para el presente trabajo se propone la realización de una aplicación que permita al usuario dibujar un número (entre 0 y 9) y la aplicación determine de qué dígito se trata a través de la utilización de algoritmos de clasificación.

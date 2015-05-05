@@ -48,7 +48,7 @@ Luego, es necesario abrir el browser y en la barra de búsqueda colocar: **local
 
 La aplicación se le presenta al usuario con un canvas en el que puede dibujar el dígito a reconocer mediante la utilización del mouse y puede borrar el contenido del canvas cuando desee haciendo clic en el botón Limpiar lienzo. Una vez dibujado el dígito, puede presionar el botón Reconocer para obtener la información.
 
-<p align="center">![alt imagen1](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/test.png)</p>
+![](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/test.png)
 
 La información obtenida del canvas se envía al servidor, y puede ser procesada gracias a las librerías cgi y PIL/Pillow que permite trabajar los datos en forma de imagen.
 
@@ -60,7 +60,7 @@ Luego, cada uno de estos recibe conjuntos de datos separados en, uno con datos p
 
 Una vez procesada la imagen, los clasificadores devuelven la información correspondiente, la cual el servidor se encarga de enviar al cliente. El cliente(Browser) muestra la información en formato HTML para que el usuario pueda interpretar los resultados.
 
-<p align="center">![alt imagen2](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/res_test.png)</p>
+![](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/res_test.png)
 
 ===========
 

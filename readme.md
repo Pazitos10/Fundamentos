@@ -25,12 +25,12 @@ El trabajo es presentado en forma de aplicación web, montado sobre un servidor 
 
 ######Configuración del servidor:
 El servidor elegido fue apache en su versión 2.4.7 y fue instalado sobre un Ubuntu 14.04 con el comando: sudo apt-get install apache2  y requiere una configuración mínima, que consiste en:     
-- Agregar el directorio para el proyecto en el archivo */etc/apache2/apache.conf*
-- Habilitar la ejecución de dichos scripts al editar el archivo */etc/apache2/conf-available/serve-cgi-bin.conf*. 
+- Agregar el directorio para el proyecto en el archivo **/etc/apache2/apache.conf**
+- Habilitar la ejecución de dichos scripts al editar el archivo **/etc/apache2/conf-available/serve-cgi-bin.conf**. 
   (La ubicación del archivo puede variar según la versión/plataforma en la cual se instale apache)
 
 Donde es necesario otorgar un path en el cual corran los archivos de python con la directiva ScriptAlias /cgi-bin/ <path_residencia_scripts>
-Luego debe indicarse el directorio con el mismo path de residencia de los scripts y dentro de esa sección deben completarse las directivas *Options* y *AddHandler*.
+Luego debe indicarse el directorio con el mismo path de residencia de los scripts y dentro de esa sección deben completarse las directivas **Options** y **AddHandler**.
 
 ===========
 
@@ -40,11 +40,11 @@ Habiendo determinado el directorio de los scripts dentro del árbol del proyecto
 ===========
 
 ######Utilización:
-Es necesario instalar las dependencias de python ubicadas en el archivo *requirements.txt* incluido en el proyecto. Para instalar todos los paquetes necesarios se utiliza *pip*, el instalador de paquetes de python, como sigue: 
+Es necesario instalar las dependencias de python ubicadas en el archivo **requirements.txt** incluido en el proyecto. Para instalar todos los paquetes necesarios se utiliza **pip**, el instalador de paquetes de python, como sigue: 
 	
 	pip install -r requirements.txt
 
-Luego, es necesario abrir el browser y en la barra de búsqueda colocar: *localhost/ultimateRecognizer/html/base.html* , es claro que la ubicación del proyecto ya sido configurada en apache con la directiva ServerName localhost en el archivo */etc/apache2/apache.conf*.
+Luego, es necesario abrir el browser y en la barra de búsqueda colocar: **localhost/ultimateRecognizer/html/base.html** , es claro que la ubicación del proyecto ya sido configurada en apache con la directiva ServerName localhost en el archivo **/etc/apache2/apache.conf**.
 La aplicación se le presenta al usuario con un canvas en el que puede dibujar el dígito a reconocer mediante la utilización del mouse y puede borrar el contenido del canvas cuando desee haciendo clic en el botón Limpiar lienzo. Una vez dibujado el dígito, puede presionar el botón Reconocer para obtener la información.
 
 La información obtenida del canvas se envía al servidor, y puede ser procesada gracias a las librerías cgi y PIL/Pillow que permite trabajar los datos en forma de imagen.
@@ -60,7 +60,7 @@ Una vez procesada la imagen, los clasificadores devuelven la información corres
 ===========
 
 ######Requerimientos:
-Si bien, se mencionó anteriormente, todos los requerimientos se encuentran detallados en el archivo *requirements.txt*, incluido en el proyecto. Aún así, se mencionan a continuación:
+Si bien, se mencionó anteriormente, todos los requerimientos se encuentran detallados en el archivo **requirements.txt**, incluido en el proyecto. Aún así, se mencionan a continuación:
 
 	Pillow==2.7.0
 	ipython==1.2.1

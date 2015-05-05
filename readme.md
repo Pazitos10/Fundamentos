@@ -45,12 +45,13 @@ Es necesario instalar las dependencias de python ubicadas en el archivo **requir
 	pip install -r requirements.txt
 
 Luego, es necesario abrir el browser y en la barra de búsqueda colocar: **localhost/ultimateRecognizer/html/base.html** , es claro que la ubicación del proyecto ya sido configurada en apache con la directiva ServerName localhost en el archivo **/etc/apache2/apache.conf**.
+
 La aplicación se le presenta al usuario con un canvas en el que puede dibujar el dígito a reconocer mediante la utilización del mouse y puede borrar el contenido del canvas cuando desee haciendo clic en el botón Limpiar lienzo. Una vez dibujado el dígito, puede presionar el botón Reconocer para obtener la información.
 
 La información obtenida del canvas se envía al servidor, y puede ser procesada gracias a las librerías cgi y PIL/Pillow que permite trabajar los datos en forma de imagen.
 
 
-Una vez obtenidos los datos correspondientes al dibujo del usuario, se los convierte en una imagen en escala de grises, luego se la redimensiona a un tamaño de  8x8 para poder ser enviada a los clasificadores y comparada con las imágenes del dataset de dígitos que provee la librería scikit learn.
+Una vez obtenidos los datos correspondientes al dibujo del usuario, se los convierte en una imagen en escala de grises, luego se la redimensiona a un tamaño de 8x8 para poder ser enviada a los clasificadores y comparada con las imágenes del dataset de dígitos que provee la librería scikit learn.
 
 Internamente, se crea una instancia de nuestro clasificador que devuelve una instancia de cada uno de los 4 clasificadores utilizados. Puede verse la implementación en el archivo tinyClassifier.py incluido en el proyecto.
 Luego, cada uno de estos recibe conjuntos de datos separados en, uno con datos para el entrenamiento y uno con datos para pruebas, y luego esa información sirve de entrada al método Fit(entrenar) que cada clasificador posee. A su vez los clasificadores ejecutan el método predict(predecir) con los datos de la imagen procesada anteriormente, que le llega por parámetro a la función get_results.

@@ -14,14 +14,16 @@ Aplicar conceptos de:
 * Procesamiento de imágenes (nivel básico).
 
 ##### Palabras clave
+
 Dígitos, Reconocimiento, Clasificación, Estadística, Machine Learning, Características  (features), Clases, Supervisado, No Supervisado, Support Vector Machines, Extra Trees Classifiers, K-Nearest Neighbors Classifiers.
 
-===========
+---
 
 ###### Implementación de la aplicación
+
 El trabajo es presentado en forma de aplicación web, montado sobre un servidor apache, el cual corre scripts python utilizando la técnica cgi del lado del servidor.
 
-===========
+---
 
 ###### Configuración del servidor:
 El servidor elegido fue apache en su versión 2.4.7 y fue instalado sobre un Ubuntu 14.04 con el comando: sudo apt-get install apache2  y requiere una configuración mínima, que consiste en:     
@@ -32,14 +34,16 @@ El servidor elegido fue apache en su versión 2.4.7 y fue instalado sobre un Ubu
 Donde es necesario otorgar un path en el cual corran los archivos de python con la directiva ScriptAlias /cgi-bin/ <path_residencia_scripts>
 Luego debe indicarse el directorio con el mismo path de residencia de los scripts y dentro de esa sección deben completarse las directivas **Options** y **AddHandler**.
 
-===========
+---
 
 ###### Configuración de los scripts python para la utilización de cgi:
+
 Habiendo determinado el directorio de los scripts dentro del árbol del proyecto, para hacer uso de la técnica cgi se realiza el import de los paquetes: cgi y cgitb, en el archivo que sea necesario. Su utilización básica requiere que en un documento html se utilice un formulario cuyo atributo action contenga el path del script python que ejecuta la lógica del servidor y se supone, está esperando los datos. Luego el o los campos con datos de interés, tienen que tener su atributo name para que los datos viajen al servidor y por último un botón para que se ejecute la acción de submit del formulario.
 
-===========
+---
 
 ###### Utilización:
+
 Es necesario instalar las dependencias de python ubicadas en el archivo **requirements.txt** incluido en el proyecto. Para instalar todos los paquetes necesarios se utiliza **pip**, el instalador de paquetes de python, como sigue: 
 	
 	pip install -r requirements.txt
@@ -62,10 +66,10 @@ Una vez procesada la imagen, los clasificadores devuelven la información corres
 
 ![](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/res_test.png)
 
-===========
+---
 
 ###### Requerimientos:
-Si bien, se mencionó anteriormente, todos los requerimientos se encuentran detallados en el archivo **requirements.txt**, incluido en el proyecto. Aún así, se mencionan a continuación:
+Si bien se mencionó anteriormente, todos los requerimientos se encuentran detallados en el archivo **requirements.txt**, incluido en el proyecto. Aún así, se mencionan a continuación:
 
 	Pillow==2.7.0
 	ipython==1.2.1
@@ -79,4 +83,4 @@ Y en cuanto a dependencias que no son de Python, se encuentra el servidor:
 
 	sudo apt-get install apache2
 
-Suponiendo, claro está, que se está utilizando Ubuntu como distribución de trabajo.
+Suponiendo, claro, que se está utilizando Ubuntu como distribución de trabajo.

@@ -21,26 +21,7 @@ Dígitos, Reconocimiento, Clasificación, Estadística, Machine Learning, Caract
 
 ###### Implementación de la aplicación
 
-El trabajo es presentado en forma de aplicación web, montado sobre un servidor apache, el cual corre scripts python utilizando la técnica cgi del lado del servidor.
-
----
-
-###### Configuración del servidor:
-El servidor elegido fue apache en su versión 2.4.7 y fue instalado sobre un Ubuntu 14.04 con el comando: sudo apt-get install apache2  y requiere una configuración mínima, que consiste en:     
-- Agregar el directorio para el proyecto en el archivo **/etc/apache2/apache.conf**
-- Habilitar la ejecución de dichos scripts al editar el archivo **/etc/apache2/conf-available/serve-cgi-bin.conf**. 
-  (La ubicación del archivo puede variar según la versión/plataforma en la cual se instale apache)
-
-Donde es necesario otorgar un path en el cual corran los archivos de python con la directiva ScriptAlias /cgi-bin/ <path_residencia_scripts>
-Luego debe indicarse el directorio con el mismo path de residencia de los scripts y dentro de esa sección deben completarse las directivas **Options** y **AddHandler**.
-
----
-
-###### Configuración de los scripts python para la utilización de cgi:
-
-Habiendo determinado el directorio de los scripts dentro del árbol del proyecto, para hacer uso de la técnica cgi se realiza el import de los paquetes: cgi y cgitb, en el archivo que sea necesario. Su utilización básica requiere que en un documento html se utilice un formulario cuyo atributo action contenga el path del script python que ejecuta la lógica del servidor y se supone, está esperando los datos. Luego el o los campos con datos de interés, tienen que tener su atributo name para que los datos viajen al servidor y por último un botón para que se ejecute la acción de submit del formulario.
-
----
+El trabajo es presentado en forma de aplicación web, utilizando el microframework "Flask".
 
 ###### Utilización:
 
@@ -48,21 +29,19 @@ Es necesario instalar las dependencias de python ubicadas en el archivo **requir
 	
 	pip install -r requirements.txt
 
-Luego, es necesario abrir el browser y en la barra de búsqueda colocar: **localhost/ultimateRecognizer/html/base.html** , es claro que la ubicación del proyecto ya sido configurada en apache con la directiva ServerName localhost en el archivo **/etc/apache2/apache.conf**.
+Luego, es necesario abrir el browser y en la barra de búsqueda colocar: **localhost:5000**.
 
 La aplicación se le presenta al usuario con un canvas en el que puede dibujar el dígito a reconocer mediante la utilización del mouse y puede borrar el contenido del canvas cuando desee haciendo clic en el botón Limpiar lienzo. Una vez dibujado el dígito, puede presionar el botón Reconocer para obtener la información.
 
 ![](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/test.png)
 
-La información obtenida del canvas se envía al servidor, y puede ser procesada gracias a las librerías cgi y PIL/Pillow que permite trabajar los datos en forma de imagen.
-
+La información obtenida del canvas se envía al servidor, y puede ser procesada gracias a la librería Pillow que permite trabajar los datos en forma de imagen.
 
 Una vez obtenidos los datos correspondientes al dibujo del usuario, se los convierte en una imagen en escala de grises, luego se la redimensiona a un tamaño de 8x8 para poder ser enviada a los clasificadores y comparada con las imágenes del dataset de dígitos que provee la librería scikit learn.
 
-Internamente, se crea una instancia de nuestro clasificador que devuelve una instancia de cada uno de los 4 clasificadores utilizados. Puede verse la implementación en el archivo tinyClassifier.py incluido en el proyecto.
-Luego, cada uno de estos recibe conjuntos de datos separados en, uno con datos para el entrenamiento y uno con datos para pruebas, y luego esa información sirve de entrada al método Fit(entrenar) que cada clasificador posee. A su vez los clasificadores ejecutan el método predict(predecir) con los datos de la imagen procesada anteriormente, que le llega por parámetro a la función get_results.
+Internamente, se crea una instancia de nuestro manager de clasificadores que gestiona una instancia de cada uno de los 4 clasificadores utilizados. Puede verse la implementación en el archivo classifiersManager.py incluido en el proyecto.
 
-Una vez procesada la imagen, los clasificadores devuelven la información correspondiente, la cual el servidor se encarga de enviar al cliente. El cliente(Browser) muestra la información en formato HTML para que el usuario pueda interpretar los resultados.
+Una vez procesada la imagen, los clasificadores devuelven la información correspondiente a las predicciones llevadas a cabo y es dispuesta en la aplicación web para que el usuario interprete los resultados.
 
 ![](https://raw.githubusercontent.com/Pazitos10/Fundamentos/master/ultimateRecognizer/statics/img/res_test.png)
 
@@ -71,16 +50,31 @@ Una vez procesada la imagen, los clasificadores devuelven la información corres
 ###### Requerimientos:
 Si bien se mencionó anteriormente, todos los requerimientos se encuentran detallados en el archivo **requirements.txt**, incluido en el proyecto. Aún así, se mencionan a continuación:
 
-	Pillow==2.7.0
-	ipython==1.2.1
-	matplotlib==1.3.1
-	numpy==1.8.2
-	scikit-learn==0.15.2
-	scipy==0.13.3
-	urllib3==1.7.1
-
-Y en cuanto a dependencias que no son de Python, se encuentra el servidor:
-
-	sudo apt-get install apache2
-
-Suponiendo, claro, que se está utilizando Ubuntu como distribución de trabajo.
+	Flask==0.12.1
+	ipdb==0.10.2
+	ipython==5.3.0
+	ipython-genutils==0.2.0
+	itsdangerous==0.24
+	Jinja2==2.9.6
+	MarkupSafe==1.0
+	matplotlib==2.0.0
+	numpy==1.12.1
+	olefile==0.44
+	packaging==16.8
+	pexpect==4.2.1
+	pickleshare==0.7.4
+	Pillow==4.0.0
+	prompt-toolkit==1.0.14
+	ptyprocess==0.5.1
+	Pygments==2.2.0
+	pyparsing==2.2.0
+	python-dateutil==2.6.0
+	pytz==2017.2
+	scikit-learn==0.18.1
+	scipy==0.19.0
+	simplegeneric==0.8.1
+	six==1.10.0
+	sklearn==0.0
+	traitlets==4.3.2
+	wcwidth==0.1.7
+	Werkzeug==0.12.1

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="tabla-results">
+    <h4>Resultados: </h4> 
+    <div class="col-md-3">
+    <img id="thumb-dibujado" src="static/img/img.png" class="img-responsive img-rounded" alt="static/img/img.png" width="280" height="80">
+    </div>
+    <div class="col-md-3">
+        <h6 class="text-center">Predicción según clasificador</h6>
+        <table class="table" id="results">
+            <tr>
+                <td><strong>Método</strong></td>
+                <td><strong>Clase</strong></td>
+            </tr>
+            
+            {% for method, value in predictions.items() %}
+            <tr><td>{{method}}</td><td>{{value}}</td></tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="col-md-6">
+        <h6 class="text-center"> Probabilidades según clasificadores (%) </h6>
+        <table class="table text-center">
+            
+            <tr>
+            
+            <td><strong> Clases </strong></td>
+            
+            {% for method in predictions.keys() %}
+                <td><strong> {{method}}  </strong></td>
+            {% endfor %}
+            </tr>
+            
+            <td>{% for i in range(10) %} {{i}} <br> {% endfor %}</td>
+
+            {% for prob_list in probs %}
+                <td>
+                {% for value in prob_list %}
+                    {% if value|is_maximum_element(prob_list)  %}
+                        <span style="color:green"><strong>{{value}}</strong></span> <br>
+                    {% else %}
+                        <span>{{value}}</span> <br>
+                    {% endif %}
+                {% endfor %}        
+                </td>
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="buttons">
+        <a class="btn btn-success" id="btn-atras" href="/">
+            <span class="glyphicon glyphicon-chevron-left"></span> 
+            Atrás
+        </a>
+        <a class="btn btn-primary pull-right" href="#" role="button" 
+            id="btn-reintentar" onclick="reconocer($('#thumb-dibujado')[0].alt, true)"> 
+            Reintentar <span class="glyphicon glyphicon-repeat"></span>
+        </a>
+    </div>
+    <form id="form" method="post" action="/recognize">
+        <input type="hidden" name="matriz_canvas" id="matriz_canvas" value="">
+        <input type="hidden" name="is_a_path" id="is_a_path" value="">
+    </form>
+</div>
+{% endblock content %}

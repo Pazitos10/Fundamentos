@@ -1,16 +1,16 @@
 function setup() {
-    function checkResults(){
-        var hay_results = $.cookie('hay_results');
-        if(Boolean(hay_results)){
-            cargarTablaResults();
-        }
-        else
-            remove_cookies();
-    }
+    // function checkResults(){
+    //     var hay_results = $.cookie('hay_results');
+    //     if(Boolean(hay_results)){
+    //         cargarTablaResults();
+    //     }
+    //     else
+    //         remove_cookies();
+    // }
 
-    function cargarTablaResults () {
-        $("#page-content").load("resultados_cargados.html");
-    }
+    // function cargarTablaResults () {
+    //     $("#page-content").load("resultados_cargados.html");
+    // }
 
     function createCanvas(parent, width, height) {
         var canvas = {};
@@ -26,14 +26,14 @@ function setup() {
     function init(container, width, height, fillColor) {
         var canvas = createCanvas(container, width, height);
         var ctx = canvas.context;
-        $.cookie("hay_datos", 'False', { expires: null, path: '/'});
+        //$.cookie("hay_datos", 'False', { expires: null, path: '/'});
         ctx.fillCircle = function(x, y, radius, fillColor) {
             this.fillStyle = fillColor;
             this.beginPath();
             this.moveTo(x, y);
             this.rect(x-15, y-15, radius, radius);
             this.fill();
-            $.cookie("hay_datos", 'True', { expires: null, path: '/'}); 
+            //$.cookie("hay_datos", 'True', { expires: null, path: '/'}); 
         };
         ctx.clearTo = function(fillColor) {
             ctx.fillStyle = fillColor;
@@ -48,7 +48,7 @@ function setup() {
             }
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
-            var radius = 60;
+            var radius = 35;
             var fillColor = '#000000';
             ctx.fillCircle(x, y, radius, fillColor);
         };
@@ -60,38 +60,40 @@ function setup() {
         };
     }
 
-    
-    var container = document.getElementById('canvas');
-    init(container, 450, 450, '#ffffff');
-    checkResults();
+    var canvas = document.querySelector('#canvas');
+    if (canvas) {
+        init(document.querySelector('#canvas'), 450, 450, '#ffffff');
+    }
 };
 
 
-function reconocer(imagen) {
+function reconocer(imagen, is_a_path) {
     var datos = imagen;
+    console.log(is_a_path);
     $("#matriz_canvas").val(datos);
-    $("#form-cgi").submit();
+    $('#is_a_path').val(String(is_a_path));
+    $("#form").submit();
 };
 
 
 function limpiarCanvas(){
-    remove_cookies();
-    $("#tabla-results").hide();
+    //remove_cookies();
+    //$("#tabla-results").hide();
     var ctx = $('canvas')[0].getContext("2d");
     ctx.clearTo("#ffffff");
     
 };
 
 
-function remove_cookies() {
-    var cookies = $.cookie();
-    for(var cookie in cookies) {
-       $.removeCookie(cookie);
-    }
-};
+// function remove_cookies() {
+//     var cookies = $.cookie();
+//     for(var cookie in cookies) {
+//        $.removeCookie(cookie);
+//     }
+// };
 
 
-function atras(){
-    $.cookie('hay_results','',{path:'/', expires:null});
-    location.reload();
-};
+// function atras(){
+//     $.cookie('hay_results','',{path:'/', expires:null});
+//     location.reload();
+// };

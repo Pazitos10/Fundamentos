@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-canvas">
+    <div id="canvas" width="380" height="380"></div>
+</div>
+<div class="container-main">
+    <div class="col-md-4"></div>
+    <div class="col-md-4" style="margin-top:-80px">
+        <form id="form" class="form-horizontal" method="post" action="/recognize">
+            <br/>
+                <div class="form-group pull-left">
+                    <a class="btn btn-default" href="#" role="button" id="btn-reconocer" onclick="reconocer($('canvas')[0].toDataURL(), false)"> Reconocer <span class="glyphicon glyphicon-chevron-right"></span></a>
+                </div>
+                <div class="form-group pull-right">
+                    <input type="hidden" name="matriz_canvas" id="matriz_canvas">
+                    <input type="hidden" name="is_a_path" id="is_a_path" value="">
+                    <a class="btn btn-default" href="#" id="btn-limpiar" onclick="limpiarCanvas()">Limpiar lienzo</a>
+                </div>    
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+{% endblock content %}

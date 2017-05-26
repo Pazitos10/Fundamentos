@@ -26,7 +26,7 @@ class ClassifiersManager(object):
             self.extra_trees_clf(),
             self.k_neighbors_clf()
         ]
-        self.pca = PCA(svd_solver='randomized', n_components=20)
+        self.pca = PCA(svd_solver='randomized', n_components=25)
         self.std_scaler = StandardScaler()
 
     def extra_trees_clf(self):
@@ -42,15 +42,17 @@ class ClassifiersManager(object):
         return SVC(gamma=0.001, probability=True)
 
     def k_neighbors_clf(self):
-        return KNeighborsClassifier(n_neighbors=9, algorithm='auto')
+        return KNeighborsClassifier(n_neighbors=13, algorithm='auto')
 
     def train(self, X, y): #entrenar
         for clf in self.classifiers:
             clf.fit(X, y)
+        
 
     def predict(self, X): #predecir
         predicted = {}
         probs = []
+        print("explained variance", np.sum(self.pca.explained_variance_ratio_) )
         for clf in self.classifiers:
             x = self.pca.transform([X])
             x = self.std_scaler.transform(x)
@@ -71,7 +73,7 @@ class ClassifiersManager(object):
         return predicted, probs
 
     def splitData(self, X, y):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
         X_train = self.pca.fit_transform(X_train)
         X_test = self.pca.transform(X_test)
         X_train = self.std_scaler.fit_transform(X_train)

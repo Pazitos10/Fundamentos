@@ -5,53 +5,63 @@ import urllib, os, io, json, base64
 import numpy as np
 from PIL import Image, ImageOps
 from sklearn import datasets
-from utils import remove_file
+from sklearn.preprocessing import MinMaxScaler
+from utils import remove_file, gray2bw
 from classifiersManager import ClassifiersManager
+from time import sleep
 
 path = 'static/img/img.png'
-path_converted = 'static/img/grey.png'
-path_bw = 'static/img/bw.png'
-path_bw_s = 'static/img/bw_s.png'
+path_inverted = 'static/img/inverted.png'
 
-def process_data(data, is_a_path=False):
-    remove_file(path_bw_s)
-    if not is_a_path: #Consulta string de datos de html
+clf_mngr = ClassifiersManager()
+min_max_scaler = MinMaxScaler((0, 16))
+rescaler = MinMaxScaler((0, 255))
+
+def process_data(data):
+    if data != '' and data != path:
+        remove_file(path_inverted)
         remove_file(path)
         data = data.split(',')[1]
         f = io.BytesIO(base64.b64decode(data))
-        im_a = image_as_array(f, guardar=True)
+        img = Image.open(f)
+        img.save(path)
     else:
-        im_a = image_as_array(path) # path es igual a data
-    print(im_a)
+        img = Image.open(path)
+
+    im_a = get_img_arr(img)
     return get_results(im_a.flatten())
 
-def image_as_array(f, guardar=False):
-    img = Image.open(f)
-    if guardar:
-        img.save(path)
-    gray = img.convert('L')
-    gray.thumbnail((8,8), Image.LANCZOS)
-    gray.save(path_bw_s)
-    gray = ImageOps.invert(gray)
-    gray.save(path_bw)
-    #im_a = np.array(gray)
-   
-    im_a = np.asarray(gray, dtype=float)
-    im_a = list(map((lambda x: abs(x//16) ), im_a))
-    im_a = np.asarray(im_a)
-    return im_a
+def get_img_arr(img):
+    #print(np.asarray(filename))
+    #number = Image.open(filename)
+    number = img.convert('L')
+    number = ImageOps.invert(number)
+    number.thumbnail((8,8), Image.LANCZOS)
+    number = np.asarray(number, dtype=np.float64).reshape(1, -1)
+    min_max_scaler.fit(number.reshape(-1, 1))
+    number = min_max_scaler.transform(number.reshape(1, -1))
+    rescale_and_save(np.copy(number))
+    return np.trunc(number)
+
+def rescale_and_save(number_array):
+    rescaler.fit(number_array.reshape(-1, 1))
+    rescaled_number = rescaler.transform(number_array.reshape(1, -1))
+    inverted = Image.fromarray(np.uint8(rescaled_number.reshape(8,8)))
+    inverted = inverted.resize((150,150))
+    inverted.save(path_inverted)
 
 def get_results(predict_data):
-    clf_mngr = ClassifiersManager()
+    global clf_mngr
     digits = datasets.load_digits()
     n_samples = len(digits.images)
-    data = digits.images.reshape((n_samples, -1))
-    
-    X_train, X_test, y_train, y_test = clf_mngr.splitData(data, digits.target)
 
+    #binarized = list(map(lambda digit: gray2bw(digit), digits.images))
+
+    data = digits.images.reshape((n_samples, -1))
+    X_train, X_test, y_train, y_test = clf_mngr.splitData(data, digits.target)
     clf_mngr.train(X_train, y_train) #entrenan todos con los mismos datos
     predicted, probs = clf_mngr.predict(predict_data)
-    
+
     save_probs(probs)    
     return predicted, probs
 

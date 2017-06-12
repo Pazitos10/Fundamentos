@@ -6,7 +6,7 @@
 #  This class, basically handles multiple classifiers instances and
 #  wrap some of its behaviours to be generic.
 import numpy as np
-from sklearn import metrics
+from sklearn import metrics, datasets
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -72,8 +72,8 @@ class ClassifiersManager(object):
             probs.append(pred_proba)
         return predicted, probs
 
-    def splitData(self, X, y):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+    def splitData(self, X, y, test_size=0.25):
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
         X_train = self.pca.fit_transform(X_train)
         X_test = self.pca.transform(X_test)
         X_train = self.std_scaler.fit_transform(X_train)
@@ -103,3 +103,26 @@ class ClassifiersManager(object):
         results.write(line)
         results.close()
         return matrix
+
+    def save_default_metrics(self):
+        remove_file('metrics.txt')
+        results = open('metrics.txt', 'a+')
+        digits = datasets.load_digits()
+        n_samples = len(digits.images)
+        data = digits.images.reshape((n_samples, -1))
+        reports_and_matrix = [] 
+        for classifier in self.classifiers:            
+            classifier.fit(data[:n_samples // 2], digits.target[:n_samples // 2])
+            # Now predict the value of the digit on the second half:
+            expected = digits.target[n_samples // 2:]
+            predicted = classifier.predict(data[n_samples // 2:])
+
+            conf_matrix = metrics.confusion_matrix(expected, predicted)
+            report = metrics.classification_report(expected, predicted)
+
+            line = "Classification report for classifier %s:\n%s\n" % (classifier, report)
+            line += "Confusion matrix:\n%s" % conf_matrix
+            line += "\n\n"
+            results.write(line)
+            
+        results.close()

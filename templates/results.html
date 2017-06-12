@@ -53,6 +53,7 @@
             <span class="glyphicon glyphicon-chevron-left"></span> 
             Atrás
         </a>
+        {# <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Reportes y matrices de confusión</button> #}
         <a class="btn btn-primary pull-right" href="#" role="button" 
             id="btn-reintentar" onclick="reconocer($('#thumb-dibujado')[0].alt, true)"> 
             Reintentar <span class="glyphicon glyphicon-repeat"></span>
@@ -63,4 +64,25 @@
         <input type="hidden" name="is_a_path" id="is_a_path" value="">
     </form>
 </div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reportes y matrices de confusión</h4>
+      </div>
+      <div class="modal-body">
+        {% for report, matrix in reports_and_matrix %}
+            <code>{{ report }}</code>
+            <br>
+            <code>{{ matrix }}</code>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock content %}

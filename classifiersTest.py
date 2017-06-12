@@ -62,7 +62,9 @@ def get_results(predict_data):
     clf_mngr.train(X_train, y_train) #entrenan todos con los mismos datos
     predicted, probs = clf_mngr.predict(predict_data)
 
-    save_probs(probs)    
+    save_probs(probs)
+    clf_mngr.save_default_metrics()
+
     return predicted, probs
 
 def save_probs(probs):
